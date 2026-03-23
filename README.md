@@ -109,3 +109,5 @@ Once the app starts, use:
 - The repository ignores generated output in `target/` via `.gitignore`.
 - H2 is configured as a runtime dependency for simple local execution.
 - Containerization files are included: `Dockerfile`, `.dockerignore`, `docker-compose.yml`.
+- Docker profile overrides are in `src/main/resources/application-docker.properties`.
+- QA audit summary is available in `docs/qa-report.md`.
