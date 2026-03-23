@@ -73,6 +73,15 @@ It runs on push and pull requests to `main` and performs:
 - Maven build and tests (`mvn clean verify`)
 - Docker image build validation
 
+### Continuous Delivery
+
+GitHub Actions workflow is available at `.github/workflows/cd.yml`.
+
+On push to `main`, it publishes Docker images to GitHub Container Registry:
+
+- `ghcr.io/<github-username>/bpo-connect:latest`
+- `ghcr.io/<github-username>/bpo-connect:sha-<commit>`
+
 ### Docker Build
 
 ```bash
