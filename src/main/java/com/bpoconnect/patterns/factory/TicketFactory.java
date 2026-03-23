@@ -9,8 +9,13 @@ import java.util.UUID;
 public class TicketFactory {
 
     public Ticket createTicket(String channel, String customerId, String agentId, String severity, String description, String referenceId) {
+        if (channel == null || channel.trim().isEmpty()) {
+            throw new IllegalArgumentException("Channel is required");
+        }
+
+        String normalizedChannel = channel.trim().toLowerCase();
         String ticketId = UUID.randomUUID().toString().substring(0, 8);
-        switch (channel.toLowerCase()) {
+        switch (normalizedChannel) {
             case "voice":
                 return new VoiceTicket(ticketId, customerId, agentId, severity, description, referenceId, "Unknown");
             case "email":

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,20 +44,21 @@ public class TicketService {
 
     @Transactional
     public Ticket createTicket(String channel, String customerId, String agentId, String severity, String description, String referenceId) {
-        Ticket ticket = ticketFactory.createTicket(channel, customerId, agentId, severity, description, referenceId);
+        String normalizedSeverity = (severity == null || severity.trim().isEmpty()) ? "Low" : severity.trim();
+        Ticket ticket = ticketFactory.createTicket(channel, customerId, agentId, normalizedSeverity, description, referenceId);
         
         // Assign SLA Strategy
         SLA sla;
         String slaId = "SLA-" + UUID.randomUUID().toString().substring(0, 4);
-        switch (severity.toLowerCase()) {
+        switch (normalizedSeverity.toLowerCase()) {
             case "critical":
-                sla = new SLA(slaId, severity, new CriticalEscalation());
+                sla = new SLA(slaId, normalizedSeverity, new CriticalEscalation());
                 break;
             case "high":
-                sla = new SLA(slaId, severity, new HighPriorityEscalation());
+                sla = new SLA(slaId, normalizedSeverity, new HighPriorityEscalation());
                 break;
             default:
-                sla = new SLA(slaId, severity, new LowPriorityEscalation());
+                sla = new SLA(slaId, normalizedSeverity, new LowPriorityEscalation());
                 break;
         }
 
