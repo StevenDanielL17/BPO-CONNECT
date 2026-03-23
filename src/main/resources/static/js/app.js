@@ -1,4 +1,4 @@
-const API_BASE = "/api";
+const API_BASE = (window.BPO_API_BASE || "/api").replace(/\/$/, "");
 let currentUser = "A101";
 let sceneContext = null;
 let scrollVelocity = 0;

@@ -1,0 +1,9 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/src/main/resources/static/index.html" },
+    { "source": "/css/:path*", "destination": "/src/main/resources/static/css/:path*" },
+    { "source": "/js/:path*", "destination": "/src/main/resources/static/js/:path*" },
+    { "source": "/api/:path*", "destination": "https://replace-with-your-backend-url/api/:path*" }
+  ]
+}
