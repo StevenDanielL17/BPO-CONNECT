@@ -94,10 +94,11 @@ public class TicketService {
         // In a real app, we'd find the SLA associated with the ticket's priority
         Ticket ticket = getTicket(ticketId);
         if (ticket != null) {
-            SLA sla = slaRepository.findByPriorityLevel(ticket.getSeverity()).orElse(null);
+            String severity = normalizeSeverity(ticket.getSeverity());
+            SLA sla = slaRepository.findByPriorityLevel(severity).orElse(null);
             if (sla == null) {
                 // Default if not found
-                sla = new SLA("DEF", ticket.getSeverity(), new LowPriorityEscalation());
+                sla = new SLA("DEF", severity, new LowPriorityEscalation());
             } else {
                 // Re-attach strategy since it's @Transient
                 attachStrategy(sla);
@@ -108,10 +109,18 @@ public class TicketService {
     }
 
     private void attachStrategy(SLA sla) {
-        switch (sla.getPriorityLevel().toLowerCase()) {
+        String priorityLevel = normalizeSeverity(sla.getPriorityLevel());
+        switch (priorityLevel.toLowerCase()) {
             case "critical": sla.setStrategy(new CriticalEscalation()); break;
             case "high": sla.setStrategy(new HighPriorityEscalation()); break;
             default: sla.setStrategy(new LowPriorityEscalation()); break;
         }
+    }
+
+    private String normalizeSeverity(String severity) {
+        if (severity == null || severity.trim().isEmpty()) {
+            return "Low";
+        }
+        return severity.trim();
     }
 }

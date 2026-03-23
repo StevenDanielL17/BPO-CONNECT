@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPO Connect | Neon Nexus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <aside class="control-deck holographic">
+        <div class="deck-brand">
+            <p class="brand-kicker">BPO CONNECT</p>
+            <h1 class="brand-title glitchable" data-text="Neon Nexus">Neon Nexus</h1>
+            <p class="brand-sub">Operator: <span id="current-user">A101</span></p>
+        </div>
+
+        <div class="tube-stack" aria-hidden="true">
+            <span class="tube active"></span>
+            <span class="tube"></span>
+            <span class="tube active"></span>
+            <span class="tube"></span>
+        </div>
+
+        <div class="deck-switches">
+            <label class="switch-wrap">
+                <input id="terminal-toggle" type="checkbox">
+                <span class="switch"></span>
+                Terminal Mode
+            </label>
+            <label class="switch-wrap">
+                <input id="effects-toggle" type="checkbox" checked>
+                <span class="switch"></span>
+                Glitch Effects
+            </label>
+        </div>
+    </aside>
+
+    <main class="main-stage">
+        <section class="hero-zone">
+            <div id="hero-canvas" class="hero-canvas" aria-label="3D command visualization"></div>
+            <div class="hero-overlay">
+                <p class="hero-kicker">INBOUND OPS GRID</p>
+                <h2 class="hero-title glitchable" data-text="Realtime Contact Command">Realtime Contact Command</h2>
+                <p class="hero-description">Scroll to accelerate orbiting agent nodes, distort the scene, and spin the live call-center hub.</p>
+            </div>
+
+            <div class="kpi-towers">
+                <article class="kpi-tower holographic" data-speed="0.2">
+                    <h3>Queue</h3>
+                    <p class="kpi-value" id="kpi-open">0</p>
+                    <div class="power-bar"><span class="metric-fill" data-target="82"></span></div>
+                </article>
+                <article class="kpi-tower holographic" data-speed="0.5">
+                    <h3>Resolve Rate</h3>
+                    <p class="kpi-value">94%</p>
+                    <div class="power-bar"><span class="metric-fill" data-target="94"></span></div>
+                </article>
+                <article class="kpi-tower holographic" data-speed="1.0">
+                    <h3>Escalations</h3>
+                    <p class="kpi-value" id="kpi-escalated">0</p>
+                    <div class="power-bar"><span class="metric-fill" data-target="38"></span></div>
+                </article>
+            </div>
+        </section>
+
+        <section class="deck-grid">
+            <article class="deck-panel holographic tilted">
+                <h3>User Login</h3>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="agent1">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="pass123">
+                </div>
+                <button class="neon-btn" onclick="login()">Authenticate</button>
+                <div id="login-result" class="result-box"></div>
+            </article>
+
+            <article class="deck-panel holographic tilted active-call-card" id="active-call-card">
+                <h3>Cyber Call Queue</h3>
+                <div class="form-group">
+                    <label for="ani-input">Phone Number (ANI)</label>
+                    <input type="text" id="ani-input" placeholder="555-1234">
+                </div>
+                <button class="neon-btn warning" onclick="simulateCall()">Simulate Inbound Call</button>
+                <div class="voice-wave" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div id="screen-pop-result" class="result-box"></div>
+            </article>
+
+            <article class="deck-panel holographic tilted">
+                <h3>Knowledge Base Scan</h3>
+                <div class="form-group">
+                    <label for="kb-query">Search Query</label>
+                    <input type="text" id="kb-query" placeholder="Password reset">
+                </div>
+                <button class="neon-btn" onclick="searchKB()">Run Search</button>
+                <div id="kb-results" class="result-box"></div>
+            </article>
+
+            <article class="deck-panel holographic tilted">
+                <h3>Create Support Ticket</h3>
+                <div class="form-group">
+                    <label for="cust-id">Customer ID</label>
+                    <input type="text" id="cust-id" placeholder="C001" disabled>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="channel">Channel</label>
+                        <select id="channel">
+                            <option value="Voice">Voice</option>
+                            <option value="Email">Email</option>
+                            <option value="Chat">Chat</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="severity">Severity</label>
+                        <select id="severity">
+                            <option value="Low">Low</option>
+                            <option value="High">High</option>
+                            <option value="Critical">Critical</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" rows="3" placeholder="Describe customer issue..."></textarea>
+                </div>
+                <button class="neon-btn" onclick="createTicket()">Forge Ticket</button>
+                <div id="ticket-result" class="result-box"></div>
+            </article>
+
+            <article class="deck-panel holographic tilted">
+                <h3>Sentiment HUD</h3>
+                <div class="sentiment-hud">
+                    <div class="radar danger">
+                        <span>Threat</span>
+                    </div>
+                    <div class="radar stable">
+                        <span>Trust</span>
+                    </div>
+                    <div class="radar warning-state">
+                        <span>Drift</span>
+                    </div>
+                </div>
+                <p class="muted">Pulse intensity tracks queue pressure and recent escalations.</p>
+            </article>
+
+            <article class="deck-panel holographic tilted">
+                <h3>Ops + QA Console</h3>
+                <div class="button-row">
+                    <button class="neon-btn" onclick="generateReport()">Generate Daily Report</button>
+                </div>
+                <div class="form-group">
+                    <label for="qa-agent-id">Agent ID</label>
+                    <input type="text" id="qa-agent-id" placeholder="A101">
+                </div>
+                <button class="neon-btn warning" onclick="loadEvaluations()">Inspect Evaluations</button>
+                <div id="qa-results" class="result-box"></div>
+            </article>
+
+            <article class="deck-panel holographic queue-panel">
+                <div class="queue-head">
+                    <h3>Active Tickets</h3>
+                    <button class="neon-btn small" onclick="loadTickets()">Refresh Queue</button>
+                </div>
+                <p class="muted">Drag a ticket card right to quick-answer.</p>
+                <div id="queue-stack" class="queue-stack"></div>
+            </article>
+        </section>
+    </main>
+
+    <button id="phone-handset" class="phone-handset" aria-label="Pick up call">
+        <span class="handset-icon">📞</span>
+        <span class="ripple"></span>
+    </button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r159/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
