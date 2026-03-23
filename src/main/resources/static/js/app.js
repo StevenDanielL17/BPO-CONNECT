@@ -72,10 +72,13 @@ async function simulateCall() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ani })
         });
-        const data = await response.text();
+        if (!response.ok) {
+            throw new Error(`Call API failed with status ${response.status}`);
+        }
 
-        if (data) {
-            const customer = JSON.parse(data);
+        const customer = await response.json();
+
+        if (customer) {
             showResult("screen-pop-result", `<strong>Screen Pop</strong><br>Customer: ${customer.customerName}<br>Email: ${customer.email}<br>Status: ${customer.accountStatus}`);
             document.getElementById("cust-id").value = customer.customerId;
         } else {
@@ -114,6 +117,9 @@ async function createTicket() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
+        if (!response.ok) {
+            throw new Error(`Ticket create failed with status ${response.status}`);
+        }
         const data = await response.json();
 
         showResult("ticket-result", `<strong>Ticket Created</strong><br>Ticket ID: ${data.ticketId}<br>Status: ${data.status}`);
@@ -213,31 +219,44 @@ function renderQueue(tickets) {
 async function loadTickets() {
     try {
         const response = await fetch(`${API_BASE}/tickets`);
+        if (!response.ok) {
+            throw new Error(`Ticket list failed with status ${response.status}`);
+        }
         const tickets = await response.json();
         renderQueue(tickets);
     } catch (e) {
         console.error(e);
+        showResult("qa-results", "Unable to load ticket queue.");
     }
 }
 
 async function updateStatus(ticketId, status) {
     try {
-        await fetch(`${API_BASE}/tickets/${ticketId}/status`, {
+        const response = await fetch(`${API_BASE}/tickets/${ticketId}/status`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status })
         });
+        if (!response.ok) {
+            throw new Error(`Status update failed with status ${response.status}`);
+        }
+        await loadTickets();
     } catch (e) {
         console.error(e);
+        showResult("qa-results", `Ticket status update failed for ${ticketId}.`);
     }
 }
 
 async function escalate(ticketId) {
     try {
-        await fetch(`${API_BASE}/tickets/${ticketId}/escalate`, { method: "POST" });
-        loadTickets();
+        const response = await fetch(`${API_BASE}/tickets/${ticketId}/escalate`, { method: "POST" });
+        if (!response.ok) {
+            throw new Error(`Escalation failed with status ${response.status}`);
+        }
+        await loadTickets();
     } catch (e) {
         console.error(e);
+        showResult("qa-results", `Ticket escalation failed for ${ticketId}.`);
     }
 }
 
