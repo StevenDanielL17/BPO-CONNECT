@@ -62,6 +62,32 @@ mvn clean package
 mvn test
 ```
 
+## DevOps Setup
+
+### Continuous Integration
+
+GitHub Actions workflow is available at `.github/workflows/ci.yml`.
+
+It runs on push and pull requests to `main` and performs:
+
+- Maven build and tests (`mvn clean verify`)
+- Docker image build validation
+
+### Docker Build
+
+```bash
+docker build -t bpo-connect:latest .
+docker run --rm -p 8080:8080 bpo-connect:latest
+```
+
+### Docker Compose
+
+```bash
+docker compose up --build -d
+docker compose logs -f
+docker compose down
+```
+
 ## API and UI
 
 Once the app starts, use:
@@ -73,3 +99,4 @@ Once the app starts, use:
 
 - The repository ignores generated output in `target/` via `.gitignore`.
 - H2 is configured as a runtime dependency for simple local execution.
+- Containerization files are included: `Dockerfile`, `.dockerignore`, `docker-compose.yml`.

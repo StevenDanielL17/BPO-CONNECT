@@ -1,0 +1,11 @@
+services:
+  bpo-connect:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bpo-connect-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    restart: unless-stopped
