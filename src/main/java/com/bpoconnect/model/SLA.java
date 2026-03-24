@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "slas")
+@SuppressWarnings("unused")
 public class SLA {
     @Id
     private String slaId;
@@ -37,3 +38,5 @@ public class SLA {
     
     public String getPriorityLevel() { return priorityLevel; }
 }
+
+

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @DiscriminatorValue("QA")
+@SuppressWarnings("unused")
 public class QualityAnalyst extends User {
     
     public QualityAnalyst() {}
@@ -12,3 +13,5 @@ public class QualityAnalyst extends User {
         super(userId, username, email, password, "Quality Analyst");
     }
 }
+
+

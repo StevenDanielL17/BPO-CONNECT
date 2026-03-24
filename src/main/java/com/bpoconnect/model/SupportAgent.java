@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @DiscriminatorValue("AGENT")
+@SuppressWarnings("unused")
 public class SupportAgent extends User {
     private String teamId;
     private String currentStatus;
@@ -25,3 +26,5 @@ public class SupportAgent extends User {
     public String getCurrentStatus() { return currentStatus; }
     public void setCurrentStatus(String currentStatus) { this.currentStatus = currentStatus; }
 }
+
+

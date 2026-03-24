@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @DiscriminatorValue("ADMIN")
+@SuppressWarnings("unused")
 public class SystemAdmin extends User {
 
     public SystemAdmin() {}
@@ -12,3 +13,5 @@ public class SystemAdmin extends User {
         super(userId, username, email, password, "Admin");
     }
 }
+
+

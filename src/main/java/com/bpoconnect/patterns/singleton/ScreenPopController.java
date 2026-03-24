@@ -2,7 +2,7 @@ package com.bpoconnect.patterns.singleton;
 
 import com.bpoconnect.model.Customer;
 import com.bpoconnect.repository.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -12,7 +12,7 @@ public class ScreenPopController {
     
     private final CustomerRepository customerRepository;
 
-    @Autowired
+
     public ScreenPopController(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }

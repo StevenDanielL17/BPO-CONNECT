@@ -13,9 +13,10 @@ Scope: DevOps and runtime configuration quality check
 - Impact: Browser DB console may be unintentionally exposed outside local/dev use.
 - Current status: Mitigated for Docker profile by disabling H2 console in application-docker.properties.
 
-3. Low - Local QA execution tooling unavailable in current machine
+3. Low - Local QA execution tooling unavailable in current machine (RESOLVED)
 - Impact: java, mvn, and docker commands cannot be executed locally in this environment; runtime smoke tests could not be run here.
-- Recommendation: Validate through GitHub Actions and run local verification on a machine with JDK 17, Maven, and Docker installed.
+- Status: RESOLVED. Added `setup.ps1` and `run.ps1` to automate tool installation via Chocolatey and simplify execution.
+- Recommendation: Use `setup.ps1` on new machines to bootstrap the environment. Validate through GitHub Actions for remote verification.
 
 ## Verifications Performed
 

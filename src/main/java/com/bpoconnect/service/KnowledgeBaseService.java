@@ -2,7 +2,7 @@ package com.bpoconnect.service;
 
 import com.bpoconnect.model.KnowledgeBaseArticle;
 import com.bpoconnect.repository.KnowledgeBaseRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
 public class KnowledgeBaseService {
     private final KnowledgeBaseRepository kbRepository;
 
-    @Autowired
+
     public KnowledgeBaseService(KnowledgeBaseRepository kbRepository) {
         this.kbRepository = kbRepository;
     }

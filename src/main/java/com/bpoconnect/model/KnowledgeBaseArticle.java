@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "knowledge_base")
+@SuppressWarnings("unused")
 public class KnowledgeBaseArticle {
     @Id
     private String articleId;
@@ -25,3 +26,5 @@ public class KnowledgeBaseArticle {
     public String getArticleId() { return articleId; }
     public String getTitle() { return title; }
 }
+
+

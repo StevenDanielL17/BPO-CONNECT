@@ -2,11 +2,10 @@ package com.bpoconnect;
 
 import com.bpoconnect.model.*;
 import com.bpoconnect.repository.*;
+import com.bpoconnect.patterns.strategy.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.UUID;
 
 @Configuration
 public class DataInitializer {
@@ -14,8 +13,14 @@ public class DataInitializer {
     @Bean
     public CommandLineRunner initData(UserRepository userRepository,
             CustomerRepository customerRepository,
-            KnowledgeBaseRepository kbRepository) {
+            KnowledgeBaseRepository kbRepository,
+            SLARepository slaRepository) {
         return args -> {
+            // ----- Seed SLAs -----
+            slaRepository.save(new SLA("SLA-1", "Low", new LowPriorityEscalation()));
+            slaRepository.save(new SLA("SLA-2", "High", new HighPriorityEscalation()));
+            slaRepository.save(new SLA("SLA-3", "Critical", new CriticalEscalation()));
+
             // ----- Seed Users (Agents, Leaders, QA, Admins) -----
             // Agents
             userRepository.save(new SupportAgent("A101", "agent_sarah", "sarah.connor@bpo.com", "pass123", "T01"));

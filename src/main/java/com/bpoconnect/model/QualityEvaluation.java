@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "quality_evaluations")
+@SuppressWarnings("unused")
 public class QualityEvaluation {
     @Id
     private String evalId;
@@ -27,3 +28,5 @@ public class QualityEvaluation {
         this.evaluationDate = LocalDateTime.now();
     }
 }
+
+

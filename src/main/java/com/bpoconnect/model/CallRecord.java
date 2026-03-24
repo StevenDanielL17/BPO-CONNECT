@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "call_records")
+@SuppressWarnings("unused")
 public class CallRecord {
     @Id
     private String callId;
@@ -30,3 +31,5 @@ public class CallRecord {
 
     public String getCallId() { return callId; }
 }
+
+

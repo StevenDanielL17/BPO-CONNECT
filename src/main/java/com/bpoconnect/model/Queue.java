@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "ticket_queues")
+@SuppressWarnings("unused")
 public class Queue {
     @Id
     private String queueId;
@@ -18,3 +19,5 @@ public class Queue {
         this.priority = priority;
     }
 }
+
+

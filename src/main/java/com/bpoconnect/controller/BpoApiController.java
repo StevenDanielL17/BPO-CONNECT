@@ -3,7 +3,7 @@ package com.bpoconnect.controller;
 import com.bpoconnect.model.*;
 import com.bpoconnect.patterns.singleton.ScreenPopController;
 import com.bpoconnect.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class BpoApiController {
     private final ReportService reportService;
     private final QualityService qualityService;
 
-    @Autowired
+
     public BpoApiController(TicketService ticketService, 
                             ScreenPopController screenPopController,
                             KnowledgeBaseService kbService,

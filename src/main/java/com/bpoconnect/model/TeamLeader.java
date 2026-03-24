@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @DiscriminatorValue("LEADER")
+@SuppressWarnings("unused")
 public class TeamLeader extends User {
     private String teamId;
 
@@ -14,3 +15,5 @@ public class TeamLeader extends User {
         this.teamId = teamId;
     }
 }
+
+

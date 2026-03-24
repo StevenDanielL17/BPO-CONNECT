@@ -33,8 +33,11 @@ $ticketBody = @{
   referenceId = "REF-SMOKE"
 } | ConvertTo-Json
 $ticketResp = Invoke-RestMethod -Method Post -Uri "$BaseUrl/api/tickets" -ContentType "application/json" -Body $ticketBody
-Assert-True ([string]::IsNullOrWhiteSpace($ticketResp.ticketId) -eq $false) "Ticket ID should be present"
-Write-Host "PASS: Ticket creation" -ForegroundColor Green
+$ticketId = $ticketResp.ticketId
+if ([string]::IsNullOrWhiteSpace($ticketId)) {
+    throw "Ticket ID should be present. Received: $($ticketResp | ConvertTo-Json)"
+}
+Write-Host "PASS: Ticket creation (ID: $ticketId)" -ForegroundColor Green
 
 # 4. List tickets
 $listResp = Invoke-RestMethod -Method Get -Uri "$BaseUrl/api/tickets"

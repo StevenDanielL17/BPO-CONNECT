@@ -3,6 +3,7 @@ package com.bpoconnect.model;
 import jakarta.persistence.*;
 
 @Entity
+@SuppressWarnings("unused")
 public class EmailTicket extends Ticket {
     private String emailThreadId;
 
@@ -22,3 +23,5 @@ public class EmailTicket extends Ticket {
         return "Email Ticket [" + ticketId + "] with thread ID: " + emailThreadId;
     }
 }
+
+

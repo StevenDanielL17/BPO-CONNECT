@@ -3,6 +3,7 @@ package com.bpoconnect.model;
 import jakarta.persistence.*;
 
 @Entity
+@SuppressWarnings("unused")
 public class VoiceTicket extends Ticket {
     private String callRecordId;
     private String ani;
@@ -24,3 +25,5 @@ public class VoiceTicket extends Ticket {
         return "Voice Ticket [" + ticketId + "] from ANI: " + ani;
     }
 }
+
+

@@ -9,7 +9,7 @@ import com.bpoconnect.patterns.strategy.HighPriorityEscalation;
 import com.bpoconnect.patterns.strategy.LowPriorityEscalation;
 import com.bpoconnect.repository.SLARepository;
 import com.bpoconnect.repository.TicketRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +24,7 @@ public class TicketService {
     private final SLARepository slaRepository;
     private final List<ITicketObserver> observers;
 
-    @Autowired
+
     public TicketService(TicketFactory ticketFactory, TicketRepository ticketRepository, SLARepository slaRepository, List<ITicketObserver> observers) {
         this.ticketFactory = ticketFactory;
         this.ticketRepository = ticketRepository;
@@ -95,7 +95,7 @@ public class TicketService {
         Ticket ticket = getTicket(ticketId);
         if (ticket != null) {
             String severity = normalizeSeverity(ticket.getSeverity());
-            SLA sla = slaRepository.findByPriorityLevel(severity).orElse(null);
+            SLA sla = slaRepository.findFirstByPriorityLevel(severity).orElse(null);
             if (sla == null) {
                 // Default if not found
                 sla = new SLA("DEF", severity, new LowPriorityEscalation());

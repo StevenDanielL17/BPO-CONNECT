@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "customers")
+@SuppressWarnings("unused")
 public class Customer {
     @Id
     private String customerId;
@@ -26,3 +27,5 @@ public class Customer {
     public String getCustomerName() { return customerName; }
     public String getContactNumber() { return contactNumber; }
 }
+
+

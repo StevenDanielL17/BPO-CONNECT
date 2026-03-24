@@ -32,34 +32,82 @@ BPO-CONNECT is a Spring Boot based customer support platform for BPO workflows. 
 
 ## Prerequisites
 
-- JDK 17+
-- Maven 3.8+
+### Essential (To Run the App)
+- **Java 17 JDK** - Required for Spring Boot 3.2.3
+  - [Download Oracle JDK 17](https://www.oracle.com/java/technologies/downloads/#java17)
+  - Or via Chocolatey: `choco install openjdk17`
+- **Maven 3.9+** - Build tool for Java projects
+  - [Download Maven](https://maven.apache.org/download.cgi)
+  - Or via Chocolatey: `choco install maven`
+  - Verify with `mvn -v` in your terminal
+
+### Optional (For Containerization)
+- **Docker Desktop** - To run the app in containers
+  - [Download Docker Desktop](https://www.docker.com/products/docker-desktop)
+  - Includes Docker and Docker Compose
+
+### Optional (For Testing/QA)
+- **k6** - Load testing tool (for stress tests in `qa/stress`)
+  - [Download k6](https://k6.io/docs/getting-started/installation/)
+  - Or via Chocolatey: `choco install k6`
+- **PowerShell 5.1+** - Required for smoke tests and Windows scripts (pre-installed on Windows)
+
+## Quick Setup (Windows)
+
+A setup script is provided to automate the installation of dependencies via Chocolatey:
+
+```powershell
+./setup.ps1
+```
 
 ## Run Locally
 
-### Option 1: Maven
+### Option 1: Maven (Standard)
 
 ```bash
-mvn clean install -DskipTests
+# Build the project
+mvn clean package -DskipTests
+
+# Run the application
 mvn spring-boot:run
 ```
 
-### Option 2: Script
+### Option 2: PowerShell Script (Windows)
+
+```powershell
+./run.ps1
+```
+
+### Option 3: Bash Script (Linux/macOS)
 
 ```bash
 ./run.sh
 ```
 
-## Build
+### Option 4: Docker Compose
 
 ```bash
-mvn clean package
+docker-compose up --build
 ```
 
 ## Test
 
+### Unit and Integration Tests
+
 ```bash
 mvn test
+```
+
+### Smoke Tests (requires app running)
+
+```powershell
+./qa/smoke/smoke-tests.ps1
+```
+
+### Stress Tests (requires app running and k6 installed)
+
+```bash
+k6 run qa/stress/k6-load-test.js
 ```
 
 ## DevOps Setup

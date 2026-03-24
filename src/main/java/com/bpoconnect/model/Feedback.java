@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "customer_feedback")
+@SuppressWarnings("unused")
 public class Feedback {
     @Id
     private String feedbackId;
@@ -25,3 +26,5 @@ public class Feedback {
         this.feedbackDate = LocalDateTime.now();
     }
 }
+
+

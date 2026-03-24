@@ -2,7 +2,7 @@ package com.bpoconnect.service;
 
 import com.bpoconnect.model.CallRecord;
 import com.bpoconnect.repository.CallRecordRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import java.util.UUID;
 
@@ -10,7 +10,7 @@ import java.util.UUID;
 public class CallService {
     private final CallRecordRepository callRecordRepository;
 
-    @Autowired
+
     public CallService(CallRecordRepository callRecordRepository) {
         this.callRecordRepository = callRecordRepository;
     }
