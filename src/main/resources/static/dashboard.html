@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPO Connect | Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/tokens.css">
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body data-page="dashboard">
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <p class="kicker">BPO Connect</p>
+                <h2 class="title">Operations Hub</h2>
+                <small>Role: Supervisor</small>
+            </div>
+            <nav class="nav-list" aria-label="Primary">
+                <a class="nav-item" data-nav data-route="dashboard" href="dashboard.html">Overview Dashboard</a>
+                <a class="nav-item" data-nav data-route="calls" href="calls.html">Calls and Screen Pop</a>
+                <a class="nav-item" data-nav data-route="tickets" href="tickets.html">Ticket Workspace</a>
+                <a class="nav-item" data-nav data-route="knowledge-base" href="knowledge-base.html">Knowledge Base</a>
+                <a class="nav-item" data-nav data-route="qa" href="qa.html">QA and Evaluations</a>
+                <a class="nav-item" data-nav data-route="reports" href="reports.html">Reports</a>
+                <a class="nav-item" data-nav data-route="client-portal" href="client-portal.html">Client Portal</a>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <section class="topbar">
+                <div>
+                    <h1>Overview Dashboard</h1>
+                    <p>Role-aware metrics with direct drill-down into active workflows.</p>
+                </div>
+                <div class="actions">
+                    <button class="btn btn-secondary">Saved View: Morning Shift</button>
+                    <button class="btn btn-primary">Create Ticket</button>
+                </div>
+            </section>
+
+            <section class="kpi-grid">
+                <article class="kpi-card">
+                    <p class="kpi-label">Open Tickets</p>
+                    <p class="kpi-value">128</p>
+                    <p class="delta down">+9% from previous window</p>
+                </article>
+                <article class="kpi-card">
+                    <p class="kpi-label">SLA Risk</p>
+                    <p class="kpi-value">16</p>
+                    <p class="delta warn">Priority action required</p>
+                </article>
+                <article class="kpi-card">
+                    <p class="kpi-label">Escalations</p>
+                    <p class="kpi-value">22</p>
+                    <p class="delta down">+3 unresolved</p>
+                </article>
+                <article class="kpi-card">
+                    <p class="kpi-label">Resolution Rate</p>
+                    <p class="kpi-value">94.2%</p>
+                    <p class="delta up">+1.4% this week</p>
+                </article>
+            </section>
+
+            <section class="page-grid">
+                <article class="card col-8">
+                    <h2>Live Queue Distribution</h2>
+                    <div class="pill-filters">
+                        <button>Voice</button>
+                        <button>Chat</button>
+                        <button>Email</button>
+                        <button>Critical</button>
+                    </div>
+                    <p>Chart placeholder: queue by channel and severity with click-through to Ticket Workspace.</p>
+                </article>
+
+                <article class="card col-4">
+                    <h2>Recent Activity</h2>
+                    <div class="timeline">
+                        <div class="timeline-item"><strong>A112</strong> escalated ticket T-2194.</div>
+                        <div class="timeline-item"><strong>A101</strong> resolved ticket T-2191.</div>
+                        <div class="timeline-item"><strong>QA</strong> posted feedback for A203.</div>
+                    </div>
+                </article>
+
+                <article class="card col-6">
+                    <h2>Priority Worklist</h2>
+                    <table class="table">
+                        <thead>
+                            <tr><th>Ticket</th><th>Severity</th><th>Status</th><th>SLA</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>T-2194</td><td><span class="chip chip-critical">Critical</span></td><td>Escalated</td><td>22m</td></tr>
+                            <tr><td>T-2192</td><td><span class="chip chip-open">High</span></td><td>Open</td><td>40m</td></tr>
+                            <tr><td>T-2189</td><td><span class="chip chip-open">Medium</span></td><td>In Progress</td><td>1h 10m</td></tr>
+                        </tbody>
+                    </table>
+                </article>
+
+                <article class="card col-6">
+                    <h2>Team Performance Trend</h2>
+                    <p>Chart placeholder: daily trend line for FCR, average handling time, and customer sentiment.</p>
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <nav class="mobile-nav" aria-label="Mobile">
+        <a href="dashboard.html" data-mobile-nav data-route="dashboard">Dashboard</a>
+        <a href="calls.html" data-mobile-nav data-route="calls">Calls</a>
+        <a href="tickets.html" data-mobile-nav data-route="tickets">Tickets</a>
+        <a href="knowledge-base.html" data-mobile-nav data-route="knowledge-base">KB</a>
+        <a href="reports.html" data-mobile-nav data-route="reports">Reports</a>
+    </nav>
+
+    <script src="assets/js/api-client.js"></script>
+    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/pages/dashboard.js"></script>
+</body>
+</html>

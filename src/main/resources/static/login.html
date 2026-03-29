@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - BPO Connect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/tokens.css">
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <style>
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        .login-container { width: 100%; max-width: 450px; }
+        .login-card { background: rgba(15, 23, 42, 0.9); border: 1px solid #334155; padding: 40px; border-radius: 12px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
+        .login-header { text-align: center; margin-bottom: 30px; }
+        .login-header h1 { color: white; font-size: 1.8rem; margin: 10px 0; }
+        .login-header p { color: #cbd5e1; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: #cbd5e1; font-weight: 600; margin-bottom: 8px; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: white; font-size: 1rem; box-sizing: border-box; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #60a5fa; box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1); }
+        .btn-signin { width: 100%; padding: 12px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 1rem; margin-top: 10px; transition: all 0.3s; }
+        .btn-signin:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4); }
+        .role-info { background: #1e293b; border-left: 3px solid #60a5fa; padding: 12px; border-radius: 4px; margin-top: 20px; color: #cbd5e1; font-size: 0.9rem; }
+        .back-link { text-align: center; margin-top: 20px; }
+        .back-link a { color: #60a5fa; text-decoration: none; font-weight: 600; }
+        .back-link a:hover { text-decoration: underline; }
+        .error-msg { color: #ef4444; margin-top: 5px; font-size: 0.9rem; display: none; }
+    </style>
+</head>
+<body data-page="login">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <p style="color: #60a5fa; font-weight: 600;">BPO Connect</p>
+                <h1>Sign In</h1>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="role">Select Your Role *</label>
+                    <select id="role" name="role" required onchange="updateRoleInfo()">
+                        <option value="">Choose your role...</option>
+                        <option value="agent">Agent</option>
+                        <option value="qa_lead">QA Lead</option>
+                        <option value="supervisor">Supervisor</option>
+                        <option value="client">Client</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <div class="error-msg" id="roleError">Please select a role</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" placeholder="your.email@bpoconnect.com" required>
+                    <div class="error-msg" id="emailError">Valid email required</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                    <div class="error-msg" id="passwordError">Password required</div>
+                </div>
+
+                <div class="role-info" id="roleInfo" style="display: none;"></div>
+
+                <button type="submit" class="btn-signin">Sign In</button>
+            </form>
+
+            <div class="back-link">
+                <a href="index.html">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/auth.js"></script>
+</body>
+</html>

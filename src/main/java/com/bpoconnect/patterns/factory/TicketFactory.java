@@ -10,7 +10,7 @@ public class TicketFactory {
 
     public Ticket createTicket(String channel, String customerId, String agentId, String severity, String description, String referenceId) {
         if (channel == null || channel.trim().isEmpty()) {
-            throw new IllegalArgumentException("Channel is required");
+            channel = "general";
         }
 
         String normalizedChannel = channel.trim().toLowerCase();
@@ -23,7 +23,8 @@ public class TicketFactory {
             case "chat":
                 return new ChatTicket(ticketId, customerId, agentId, severity, description, referenceId);
             default:
-                throw new IllegalArgumentException("Unknown channel: " + channel);
+                // Handle all other channels (billing, technical, account, general, etc.)
+                return new GeneralTicket(ticketId, customerId, agentId, severity, description, channel, referenceId);
         }
     }
 }

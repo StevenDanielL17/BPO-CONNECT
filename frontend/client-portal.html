@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPO Connect | Client Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/tokens.css">
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body data-page="client-portal">
+    <script src="assets/js/auth.js"></script>
+    <script>
+        requireRole('client');
+    </script>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand"><p class="kicker">BPO Connect</p><h2 class="title">Customer Portal</h2><small id="userDisplay">Customer</small></div>
+            <nav class="nav-list" aria-label="Primary">
+                <a class="nav-item active" data-nav data-route="client-portal" href="client-portal.html">👤 My Tickets</a>
+            </nav>
+            <nav class="nav-list" aria-label="Account" style="border-top: 1px solid var(--color-slate-700); margin-top: 20px; padding-top: 20px;">
+                <button onclick="logout()" class="nav-item" style="text-align: left; background: none; border: none; cursor: pointer; width: 100%;">🚪 Logout</button>
+            </nav>
+                <a class="nav-item" data-nav data-route="client-portal" href="client-portal.html">Client Portal</a>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <section class="topbar">
+                <div><h1>My Tickets</h1><p>Create and track your support requests in real-time.</p></div>
+                <div class="actions"><button class="btn btn-primary" onclick="openCreateTicketModal()">📝 Create Ticket</button></div>
+            </section>
+
+            <section class="kpi-grid">
+                <article class="kpi-card"><p class="kpi-label">Total Tickets</p><p class="kpi-value" id="totalTickets">0</p></article>
+                <article class="kpi-card"><p class="kpi-label">Open</p><p class="kpi-value" id="openTickets">0</p></article>
+                <article class="kpi-card"><p class="kpi-label">In Progress</p><p class="kpi-value" id="progressTickets">0</p></article>
+                <article class="kpi-card"><p class="kpi-label">Resolved</p><p class="kpi-value" id="resolvedTickets">0</p></article>
+            </section>
+
+            <section class="page-grid">
+                <article class="card col-12">
+                    <h2>Your Tickets</h2>
+                    <table class="table">
+                        <thead><tr><th>Ticket ID</th><th>Service</th><th>Severity</th><th>Status</th><th>Created</th><th>Action</th></tr></thead>
+                        <tbody id="ticketsTableBody">
+                            <tr><td colspan="6" style="text-align: center; color: #94a3b8;">No tickets yet. Create one to get started.</td></tr>
+                        </tbody>
+                    </table>
+                </article>
+            </section>
+        </main>
+
+        <!-- Create Ticket Modal -->
+        <div id="createTicketModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
+            <div style="background: #0f172a; border: 1px solid #334155; padding: 30px; border-radius: 12px; max-width: 500px; width: 90%;">
+                <h2 style="color: white; margin-bottom: 20px;">Create New Ticket</h2>
+                <form id="createTicketForm" style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <label style="color: #cbd5e1; display: block; margin-bottom: 5px;">Service/Category *</label>
+                        <select id="ticketChannel" required style="width: 100%; padding: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: white;">
+                            <option value="">Select category...</option>
+                            <option value="billing">Billing</option>
+                            <option value="technical">Technical Support</option>
+                            <option value="account">Account</option>
+                            <option value="general">General Inquiry</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="color: #cbd5e1; display: block; margin-bottom: 5px;">Severity *</label>
+                        <select id="ticketSeverity" required style="width: 100%; padding: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: white;">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Critical">Critical</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="color: #cbd5e1; display: block; margin-bottom: 5px;">Description *</label>
+                        <textarea id="ticketDescription" required placeholder="Describe your issue..." style="width: 100%; padding: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: white; min-height: 100px; resize: none;"></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">Create Ticket</button>
+                        <button type="button" onclick="closeCreateTicketModal()" class="btn btn-secondary" style="flex: 1;">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <nav class="mobile-nav" aria-label="Mobile">
+        <a href="client-portal.html" data-mobile-nav data-route="client-portal">🎫 My Tickets</a>
+        <a href="knowledge-base.html" data-mobile-nav data-route="knowledge-base">📚 KB</a>
+    </nav>
+    <script src="assets/js/nav.js"></script>
+    <script>
+        // Load tickets on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadClientTickets();
+        });
+
+        // Wait for form to be ready before attaching listener
+        setTimeout(function() {
+            const createForm = document.getElementById('createTicketForm');
+            if (createForm) {
+                createForm.addEventListener('submit', handleCreateTicket);
+            } else {
+                console.error('createTicketForm not found');
+            }
+        }, 100);
+
+        function openCreateTicketModal() {
+            const modal = document.getElementById('createTicketModal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeCreateTicketModal() {
+            const modal = document.getElementById('createTicketModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        async function handleCreateTicket(e) {
+            e.preventDefault();
+            
+            const user = checkAuthentication();
+            if (!user) {
+                alert('Please log in first');
+                return;
+            }
+
+            const channel = document.getElementById('ticketChannel').value;
+            const severity = document.getElementById('ticketSeverity').value;
+            const description = document.getElementById('ticketDescription').value;
+
+            if (!channel || !severity || !description) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/tickets', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        channel: channel,
+                        customerId: user.email,
+                        agentId: 'unassigned',
+                        severity: severity,
+                        description: description,
+                        referenceId: 'CLIENT-' + Date.now()
+                    })
+                });
+
+                if (response.ok) {
+                    const ticket = await response.json();
+                    alert('✅ Ticket created successfully!\nTicket ID: ' + ticket.ticketId);
+                    document.getElementById('createTicketForm').reset();
+                    closeCreateTicketModal();
+                    loadClientTickets();
+                } else {
+                    const errorText = await response.text();
+                    alert('❌ Failed to create ticket: ' + response.status + '\n' + errorText);
+                }
+            } catch (error) {
+                console.error('Error creating ticket:', error);
+                alert('❌ Error creating ticket:\n' + error.message + '\n\n💡 Make sure:\n1. Server is running at http://localhost:8080\n2. You are logged in\n3. Check browser console for details');
+            }
+        }
+
+        async function loadClientTickets() {
+            try {
+                const response = await fetch('/api/tickets');
+                if (!response.ok) {
+                    throw new Error('Server returned ' + response.status);
+                }
+                
+                const allTickets = await response.json();
+                console.log('All tickets from API:', allTickets);
+                
+                const user = checkAuthentication();
+                console.log('Current user:', user);
+                
+                if (!user) {
+                    console.error('No user logged in');
+                    return;
+                }
+                
+                // Filter tickets for this client
+                const clientTickets = allTickets.filter(t => t.customerId === user.email);
+                console.log('Filtered client tickets:', clientTickets);
+                console.log('Filter match check - customerId values:', allTickets.map(t => ({ id: t.ticketId, customerId: t.customerId })));
+                
+                // Update KPI cards
+                const totalEl = document.getElementById('totalTickets');
+                const openEl = document.getElementById('openTickets');
+                const progressEl = document.getElementById('progressTickets');
+                const resolvedEl = document.getElementById('resolvedTickets');
+                
+                if (totalEl) totalEl.textContent = clientTickets.length;
+                if (openEl) openEl.textContent = clientTickets.filter(t => t.status === 'New' || t.status === 'Open').length;
+                if (progressEl) progressEl.textContent = clientTickets.filter(t => t.status === 'InProgress').length;
+                if (resolvedEl) resolvedEl.textContent = clientTickets.filter(t => t.status === 'Resolved' || t.status === 'Closed').length;
+
+                // Populate table
+                const tbody = document.getElementById('ticketsTableBody');
+                if (!tbody) {
+                    console.error('Tickets table body not found');
+                    return;
+                }
+                
+                if (clientTickets.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #94a3b8;">No tickets yet. Create one to get started.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = clientTickets.map(ticket => `
+                    <tr>
+                        <td>${ticket.ticketId}</td>
+                        <td>${ticket.channel || 'General'}</td>
+                        <td><span class="chip chip-${ticket.severity.toLowerCase()}">${ticket.severity}</span></td>
+                        <td><span class="chip chip-${ticket.status.toLowerCase()}">${ticket.status}</span></td>
+                        <td>${new Date().toLocaleString()}</td>
+                        <td><button class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.9rem;" onclick="escalateTicket('${ticket.ticketId}')">Escalate</button></td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading tickets:', error);
+                const tbody = document.getElementById('ticketsTableBody');
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #ef4444;">Failed to load tickets. Make sure server is running at http://localhost:8080</td></tr>';
+                }
+            }
+        }
+
+        async function escalateTicket(ticketId) {
+            try {
+                const response = await fetch(`/api/tickets/${ticketId}/escalate`, {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    alert('Ticket escalated successfully!');
+                    loadClientTickets();
+                }
+            } catch (error) {
+                console.error('Error escalating ticket:', error);
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('createTicketModal');
+            if (event.target === modal) {
+                closeCreateTicketModal();
+            }
+        }
+    </script></body>
+</html>

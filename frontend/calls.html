@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPO Connect | Calls</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/tokens.css">
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body data-page="calls">
+    <script src="assets/js/auth.js"></script>
+    <script>
+        // Protect this page - only agents can access
+        requireRole('agent');
+    </script>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand"><p class="kicker">BPO Connect</p><h2 class="title">Agent Workspace</h2><small id="userDisplay">Agent</small></div>
+            <nav class="nav-list" aria-label="Primary">
+                <a class="nav-item active" data-nav data-route="calls" href="calls.html">📞 Calls & Screen Pop</a>
+                <a class="nav-item" data-nav data-route="tickets" href="tickets.html">🎫 Ticket Workspace</a>
+                <a class="nav-item" data-nav data-route="knowledge-base" href="knowledge-base.html">📚 Knowledge Base</a>
+            </nav>
+            <nav class="nav-list" aria-label="Account" style="border-top: 1px solid var(--color-slate-700); margin-top: 20px; padding-top: 20px;">
+                <button onclick="logout()" class="nav-item" style="text-align: left; background: none; border: none; cursor: pointer; width: 100%;">🚪 Logout</button>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <section class="topbar">
+                <div><h1>Calls and Screen Pop</h1><p>Fast handling interface for inbound interactions.</p></div>
+                <div class="actions"><button class="btn btn-secondary">Wrap-up Mode</button><button class="btn btn-primary">Answer Next</button></div>
+            </section>
+
+            <section class="page-grid">
+                <article class="card col-3">
+                    <h2>Inbound Queue</h2>
+                    <div style="overflow-x: auto;">
+                        <table class="table">
+                            <thead><tr><th>ANI</th><th>Wait</th><th>State</th></tr></thead>
+                            <tbody>
+                                <tr><td>555-0101</td><td>00:34</td><td><span class="chip chip-open">Ringing</span></td></tr>
+                                <tr><td>555-0112</td><td>01:22</td><td><span class="chip chip-escalated">Priority</span></td></tr>
+                                <tr><td>555-0188</td><td>00:12</td><td><span class="chip chip-open">Queued</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <article class="card col-6">
+                    <h2>Screen Pop - Active Customer</h2>
+                    <div style="display: grid; gap: 15px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #64748b; font-size: 0.85rem;">ANI</label>
+                                <input value="555-0101" style="width: 100%; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; color: #334155;" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #64748b; font-size: 0.85rem;">Customer ID</label>
+                                <input value="C001" style="width: 100%; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; color: #334155;" readonly>
+                            </div>
+                        </div>
+                        
+                        <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <p style="margin: 0 0 8px 0; color: #64748b; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Customer Info</p>
+                                <p style="margin: 8px 0; color: #1e293b;"><strong>Name:</strong> Priya S</p>
+                                <p style="margin: 8px 0; color: #1e293b;"><strong>Email:</strong> priya@example.com</p>
+                                <p style="margin: 8px 0; color: #1e293b;"><strong>Account:</strong> <span style="color: #16a34a; font-weight: 600;">Active</span></p>
+                            </div>
+                            <div>
+                                <p style="margin: 0 0 8px 0; color: #64748b; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Interaction History</p>
+                                <p style="margin: 8px 0; color: #1e293b;"><strong>Last Ticket:</strong> T-2190</p>
+                                <p style="margin: 8px 0; color: #1e293b;"><strong>Sentiment:</strong> 😊 Neutral</p>
+                                <p style="margin: 8px 0; color: #1e293b;"><strong>Channel:</strong> Voice</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card col-3">
+                    <h2>Quick Actions</h2>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-primary" style="width: 100%; padding: 12px; text-align: center; font-weight: 600;">📝 Create Ticket</button>
+                        <button class="btn btn-secondary" style="width: 100%; padding: 12px; text-align: center; font-weight: 600;">📚 Open KB</button>
+                        <button class="btn btn-warning" style="width: 100%; padding: 12px; text-align: center; font-weight: 600;">🔄 Transfer</button>
+                        <button class="btn btn-danger" style="width: 100%; padding: 12px; text-align: center; font-weight: 600;">⚠️ Escalate</button>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 0.85rem; color: #94a3b8; text-align: center; padding-top: 15px; border-top: 1px solid #e2e8f0;">💡 Keyboard shortcuts available in settings</p>
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <nav class="mobile-nav" aria-label="Mobile">
+        <a href="calls.html" data-mobile-nav data-route="calls">📞 Calls</a>
+        <a href="tickets.html" data-mobile-nav data-route="tickets">🎫 Tickets</a>
+        <a href="knowledge-base.html" data-mobile-nav data-route="knowledge-base">📚 KB</a>
+    </nav>
+
+    <script src="assets/js/api-client.js"></script>
+    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/pages/calls.js"></script>
+</body>
+</html>

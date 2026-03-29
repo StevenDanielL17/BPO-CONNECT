@@ -1,0 +1,253 @@
+.card {
+    background: var(--bg-strong);
+    border: 1px solid var(--color-neutral-200);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-4);
+    display: grid;
+    gap: var(--space-3);
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
+}
+
+.kpi-card {
+    background: linear-gradient(160deg, #ffffff 0%, #f6fbff 100%);
+    border: 1px solid #dce8fb;
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-1);
+}
+
+.kpi-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-2);
+}
+
+.kpi-value {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    color: var(--text-primary);
+}
+
+.delta {
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.delta.up { color: var(--color-success); }
+.delta.down { color: var(--color-error); }
+.delta.warn { color: var(--color-warning); }
+
+.btn {
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.16s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, var(--color-primary-600), var(--color-primary-500));
+    color: var(--color-white);
+    box-shadow: 0 10px 24px rgba(15, 98, 254, 0.25);
+}
+
+.btn-secondary {
+    border-color: #cfe1ff;
+    background: #edf4ff;
+    color: var(--color-primary-600);
+}
+
+.btn-danger {
+    border-color: #f2c5c2;
+    background: #fff1f0;
+    color: var(--color-error);
+}
+
+.btn-warning {
+    border-color: #f7dab0;
+    background: #fff7ec;
+    color: var(--color-warning);
+}
+
+.input-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+}
+
+.form-group {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.form-group label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    border: 1px solid;
+}
+
+.chip-open {
+    color: #1e5ea5;
+    background: #eaf3ff;
+    border-color: #c6dcff;
+}
+
+.chip-escalated {
+    color: #873004;
+    background: #fff3df;
+    border-color: #ffd59b;
+}
+
+.chip-critical {
+    color: #8e1c1c;
+    background: #fdeeee;
+    border-color: #f8c8c8;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid var(--color-neutral-200);
+    font-size: 0.92rem;
+}
+
+.table th {
+    color: var(--text-muted);
+    font-weight: 700;
+}
+
+.split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.timeline {
+    display: grid;
+    gap: 10px;
+}
+
+.timeline-item {
+    border-left: 2px solid #cfe1ff;
+    padding: 8px 0 8px 12px;
+}
+
+.hero-panel {
+    background: radial-gradient(circle at top right, #dbe8ff, #f8fafc 52%);
+    border: 1px solid #d5e4ff;
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-2);
+    display: grid;
+    gap: var(--space-3);
+}
+
+.pill-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.pill-filters button {
+    border: 1px solid #d6e2f5;
+    background: #f4f8ff;
+    border-radius: 999px;
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+@media (max-width: 1023px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .input-row,
+    .split {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 620px) {
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Additional chip variants for statuses */
+.chip-new {
+    color: #1e5ea5;
+    background: #c7e4f7;
+    border-color: #99c5f0;
+}
+
+.chip-inprogress {
+    color: #5d5a00;
+    background: #fffbdb;
+    border-color: #fff0a3;
+}
+
+.chip-resolved {
+    color: #0d6e04;
+    background: #d8f0da;
+    border-color: #a8ddb3;
+}
+
+.chip-closed {
+    color: #155e3c;
+    background: #d1e7dd;
+    border-color: #a8ddb3;
+}
+
+/* Severity chips */
+.chip-critical {
+    color: #8e1c1c;
+    background: #fdeeee;
+    border-color: #f8c8c8;
+}
+
+.chip-high {
+    color: #873004;
+    background: #fff3df;
+    border-color: #ffd59b;
+}
+
+.chip-medium {
+    color: #5d5a00;
+    background: #fffbdb;
+    border-color: #fff0a3;
+}
+
+.chip-low {
+    color: #0d6e04;
+    background: #d8f0da;
+    border-color: #a8ddb3;
+}

@@ -11,10 +11,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class BpoApiController {
 
     private final TicketService ticketService;
-    private final ScreenPopController screenPopController;
+    private final com.bpoconnect.patterns.singleton.ScreenPopController screenPopController;
     private final KnowledgeBaseService kbService;
     private final ReportService reportService;
     private final QualityService qualityService;

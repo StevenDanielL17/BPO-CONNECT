@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPO Connect | QA and Evaluations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/tokens.css">
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body data-page="qa">
+    <script src="assets/js/auth.js"></script>
+    <script>
+        requireRole('qa_lead');
+    </script>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand"><p class="kicker">BPO Connect</p><h2 class="title">QA Assessment Suite</h2><small id="userDisplay">QA Lead</small></div>
+            <nav class="nav-list" aria-label="Primary">
+                <a class="nav-item active" data-nav data-route="qa" href="qa.html">⭐ QA & Evaluations</a>
+            </nav>
+            <nav class="nav-list" aria-label="Account" style="border-top: 1px solid var(--color-slate-700); margin-top: 20px; padding-top: 20px;">
+                <button onclick="logout()" class="nav-item" style="text-align: left; background: none; border: none; cursor: pointer; width: 100%;">🚪 Logout</button>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <section class="topbar">
+                <div><h1>QA and Evaluations</h1><p>Transparent scorecards and coaching actions.</p></div>
+                <div class="actions"><button class="btn btn-secondary">Filter Team</button><button class="btn btn-primary">Start Review</button></div>
+            </section>
+
+            <section class="page-grid">
+                <article class="card col-4">
+                    <h2>Evaluation List</h2>
+                    <table class="table">
+                        <thead><tr><th>Agent</th><th>Score</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr><td>A101</td><td>88</td><td>Reviewed</td></tr>
+                            <tr><td>A203</td><td>72</td><td>Coaching Needed</td></tr>
+                            <tr><td>A118</td><td>91</td><td>Reviewed</td></tr>
+                        </tbody>
+                    </table>
+                </article>
+
+                <article class="card col-8">
+                    <h2>Score Breakdown</h2>
+                    <div class="kpi-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+                        <article class="kpi-card"><p class="kpi-label">Compliance</p><p class="kpi-value">92</p></article>
+                        <article class="kpi-card"><p class="kpi-label">Empathy</p><p class="kpi-value">78</p></article>
+                        <article class="kpi-card"><p class="kpi-label">Resolution Quality</p><p class="kpi-value">84</p></article>
+                    </div>
+                    <h3 style="margin-top: 8px;">Coaching Notes</h3>
+                    <p>Focus on clearer ownership statements during closure and confirm next action at the end of call.</p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-primary">Send Feedback</button>
+                        <button class="btn btn-secondary">Mark Acknowledged</button>
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <nav class="mobile-nav" aria-label="Mobile">
+        <a href="qa.html" data-mobile-nav data-route="qa">✓ QA Assessments</a>
+        <a href="knowledge-base.html" data-mobile-nav data-route="knowledge-base">📚 KB</a>
+    </nav>
+
+    <script src="assets/js/api-client.js"></script>
+    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/pages/qa.js"></script>
+</body>
+</html>

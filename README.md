@@ -150,7 +150,7 @@ docker compose down
 Once the app starts, use:
 
 - Base URL: `http://localhost:8080`
-- Static UI: `http://localhost:8080/index.html`
+- New Frontend: `http://localhost:8080/frontend/index.html`
 
 ## Notes
 
