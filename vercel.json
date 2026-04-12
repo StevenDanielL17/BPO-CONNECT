@@ -2,8 +2,16 @@
 	"cleanUrls": true,
 	"rewrites": [
 		{
+			"source": "/",
+			"destination": "https://bpo-connect-backend.onrender.com/"
+		},
+		{
 			"source": "/api/:path*",
 			"destination": "https://bpo-connect-backend.onrender.com/api/:path*"
+		},
+		{
+			"source": "/:path*",
+			"destination": "https://bpo-connect-backend.onrender.com/:path*"
 		}
 	]
 }

@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "tickets")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Ticket {
+public class Ticket {
     @Id
     protected String ticketId;
     protected String customerId;
@@ -47,8 +47,9 @@ public abstract class Ticket {
         this.agentId = agentId;
     }
     
-    // Abstract method to be implemented by Concrete Products
-    public abstract String getDetails();
+    public String getDetails() {
+        return "Ticket [" + ticketId + "] - " + channel + " (" + status + ")";
+    }
 }
 
 
