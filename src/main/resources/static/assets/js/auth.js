@@ -1,173 +1,260 @@
-// Authentication and Authorization System
+let cachedUser = null;
+let currentUserRequest = null;
+const SESSION_USER_STORAGE_KEY = "bpoConnect.sessionUser";
 
-// Role descriptions and access info
 const roleDescriptions = {
     agent: {
-        title: 'Agent',
-        description: 'Access calls, screen pop, ticket workspace, and knowledge base',
-        redirectPath: 'calls.html'
+        title: "Agent",
+        description: "Access calls, screen pop, ticket workspace, and knowledge base",
+        redirectPath: "agent-home.html"
     },
     qa_lead: {
-        title: 'QA Lead',
-        description: 'Manage quality assurance and agent evaluations',
-        redirectPath: 'qa.html'
+        title: "QA Lead",
+        description: "Manage quality assurance and agent evaluations",
+        redirectPath: "qa.html"
     },
     supervisor: {
-        title: 'Supervisor',
-        description: 'Monitor team performance and generate reports',
-        redirectPath: 'reports.html'
+        title: "Supervisor",
+        description: "Monitor team performance and generate reports",
+        redirectPath: "reports.html"
     },
     client: {
-        title: 'Client',
-        description: 'Track your tickets and interact with support',
-        redirectPath: 'client-portal.html'
+        title: "Client",
+        description: "Track your tickets and interact with support",
+        redirectPath: "client-portal.html"
     },
     admin: {
-        title: 'Admin',
-        description: 'Manage system configuration and user access',
-        redirectPath: 'admin-dashboard.html'
+        title: "Admin",
+        description: "Manage system configuration and user access",
+        redirectPath: "admin-dashboard.html"
     }
 };
 
-// Update role information on selection
-function updateRoleInfo() {
-    const roleSelect = document.getElementById('role');
-    const roleInfoDiv = document.getElementById('roleInfo');
-    
-    if (roleSelect.value) {
-        const role = roleDescriptions[roleSelect.value];
-        roleInfoDiv.innerHTML = `<strong>${role.title}:</strong> ${role.description}`;
-        roleInfoDiv.style.display = 'block';
-    } else {
-        roleInfoDiv.style.display = 'none';
+function normalizeRoleKey(role) {
+    const value = (role || "").toString().trim().toLowerCase();
+    if (!value) {
+        return "client";
     }
+    if (value.includes("admin")) return "admin";
+    if (value.includes("leader") || value.includes("supervisor")) return "supervisor";
+    if (value.includes("qa") || value.includes("quality")) return "qa_lead";
+    if (value.includes("agent")) return "agent";
+    return "client";
 }
 
-// Handle login form submission
-function setupLoginForm() {
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const role = document.getElementById('role').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-        
-        // Reset error messages
-        document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
-        
-        // Validate inputs
-        let isValid = true;
-    
-    if (!role) {
-        document.getElementById('roleError').style.display = 'block';
-        isValid = false;
+function getRoleRedirectPath(role) {
+    const roleKey = normalizeRoleKey(role);
+    return roleDescriptions[roleKey]?.redirectPath || "index.html";
+}
+
+function sanitizeSessionUser(user) {
+    if (!user) {
+        return null;
     }
-    if (!email || !email.includes('@')) {
-        document.getElementById('emailError').style.display = 'block';
-        isValid = false;
-    }
-    if (!password || password.length < 6) {
-        document.getElementById('passwordError').style.display = 'block';
-        isValid = false;
-    }
-    
-    if (!isValid) return;
-    
-    // Simulate authentication (in real app, call backend API)
-    const userData = {
-        role: role,
-        email: email,
-        name: email.split('@')[0],
-        loginTime: new Date().toISOString()
+
+    const roleKey = normalizeRoleKey(user.roleKey || user.role || user.roleLabel);
+    const roleLabel = user.roleLabel || user.role || roleDescriptions[roleKey]?.title || "Client";
+    const displayName = user.displayName || user.username || user.name || user.email || "User";
+
+    return {
+        userId: user.userId || user.id || "",
+        username: user.username || displayName,
+        displayName,
+        email: user.email || "",
+        role: roleKey,
+        roleLabel,
+        lastLoginTime: user.lastLoginTime || null
     };
-    
-    // Store in localStorage
-    localStorage.setItem('bpoConnectUser', JSON.stringify(userData));
-    
-    // Redirect to role-specific dashboard
-    const redirectPath = roleDescriptions[role].redirectPath;
-    window.location.href = redirectPath;
-        });
+}
+
+function storeSession(user) {
+    cachedUser = sanitizeSessionUser(user);
+    if (cachedUser) {
+        sessionStorage.setItem(SESSION_USER_STORAGE_KEY, JSON.stringify(cachedUser));
+    }
+    return cachedUser;
+}
+
+function readStoredSession() {
+    try {
+        const rawSession = sessionStorage.getItem(SESSION_USER_STORAGE_KEY);
+        return rawSession ? sanitizeSessionUser(JSON.parse(rawSession)) : null;
+    } catch (error) {
+        sessionStorage.removeItem(SESSION_USER_STORAGE_KEY);
+        return null;
     }
 }
 
-// Check if user is logged in
-function checkAuthentication() {
-    const user = localStorage.getItem('bpoConnectUser');
-    return user ? JSON.parse(user) : null;
+async function loadCurrentUser(forceRefresh = false) {
+    if (!forceRefresh && cachedUser) {
+        return cachedUser;
+    }
+
+    if (!forceRefresh) {
+        const storedUser = readStoredSession();
+        if (storedUser) {
+            cachedUser = storedUser;
+            return cachedUser;
+        }
+    }
+
+    if (!forceRefresh && currentUserRequest) {
+        return currentUserRequest;
+    }
+
+    currentUserRequest = (async function () {
+        try {
+            const response = await ApiClient.get("/users/me");
+            const user = response.user || response;
+            cachedUser = sanitizeSessionUser(user);
+            if (cachedUser) {
+                sessionStorage.setItem(SESSION_USER_STORAGE_KEY, JSON.stringify(cachedUser));
+            }
+            return cachedUser;
+        } catch (error) {
+            cachedUser = readStoredSession();
+            return cachedUser;
+        } finally {
+            currentUserRequest = null;
+        }
+    })();
+
+    return currentUserRequest;
 }
 
-// Get current user role
+function checkAuthentication() {
+    return cachedUser;
+}
+
 function getCurrentUserRole() {
     const user = checkAuthentication();
     return user ? user.role : null;
 }
 
-// Logout function
 function logout() {
-    localStorage.removeItem('bpoConnectUser');
-    window.location.href = 'index.html';
+    cachedUser = null;
+    sessionStorage.removeItem(SESSION_USER_STORAGE_KEY);
+    ApiClient.post("/users/logout", {})
+        .catch(function () {
+            // Ignore API logout failure and still move user out of protected pages.
+        })
+        .finally(function () {
+            window.location.href = "index.html";
+        });
 }
 
-// Check access for protected pages
-function requireRole(...allowedRoles) {
-    const user = checkAuthentication();
-    
-    if (!user) {
-        // No user logged in, redirect to login
-        window.location.href = 'login.html';
-        return;
-    }
-    
-    if (!allowedRoles.includes(user.role)) {
-        // User doesn't have access, redirect to appropriate dashboard
-        const redirectPath = roleDescriptions[user.role].redirectPath;
-        window.location.href = redirectPath;
-        return;
-    }
-    
-    // Access granted - update user info in page if element exists
-    updateUserDisplay(user);
-}
-
-// Update user display info in navigation
 function updateUserDisplay(user) {
-    const userDisplay = document.getElementById('userDisplay');
-    if (userDisplay) {
-        userDisplay.innerHTML = `${user.name} (${roleDescriptions[user.role].title})`;
+    const sessionUser = sanitizeSessionUser(user);
+    if (!sessionUser) {
+        return;
     }
-    
-    const userEmail = document.getElementById('userEmail');
+
+    const userDisplay = document.getElementById("userDisplay");
+    if (userDisplay) {
+        userDisplay.textContent = `${sessionUser.displayName} (${roleDescriptions[sessionUser.role]?.title || sessionUser.roleLabel})`;
+    }
+
+    const userEmail = document.getElementById("userEmail");
     if (userEmail) {
-        userEmail.innerHTML = user.email;
+        userEmail.textContent = sessionUser.email;
     }
 }
 
-// Setup role-based navigation
 function setupRoleBasedNav() {
     const user = checkAuthentication();
-    if (!user) return;
-    
-    const navItems = document.querySelectorAll('[data-nav]');
-    navItems.forEach(item => {
-        const requiredRoles = item.getAttribute('data-roles');
-        if (requiredRoles) {
-            const roles = requiredRoles.split(',').map(r => r.trim());
-            if (!roles.includes(user.role)) {
-                item.style.display = 'none';
-            }
+    if (!user) {
+        return;
+    }
+
+    const navItems = document.querySelectorAll("[data-nav]");
+    navItems.forEach(function (item) {
+        const requiredRoles = item.getAttribute("data-roles");
+        if (!requiredRoles) {
+            return;
+        }
+
+        const allowedRoles = requiredRoles.split(",").map(function (role) {
+            return role.trim();
+        });
+
+        if (!allowedRoles.includes(user.role)) {
+            item.style.display = "none";
         }
     });
 }
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    setupRoleBasedNav();
-    setupLoginForm();
-    const user = checkAuthentication();
-    if (user) {
+function requireRole(...allowedRoles) {
+    loadCurrentUser().then(function (user) {
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        if (allowedRoles.length && !allowedRoles.includes(user.role)) {
+            window.location.href = getRoleRedirectPath(user.role);
+            return;
+        }
+
         updateUserDisplay(user);
-    }
+    });
+    return true;
+}
+
+function guardPageFromSession() {
+    const page = document.body.getAttribute("data-page");
+    const protectedPageRoles = {
+        "agent-home": ["agent"],
+        dashboard: ["supervisor"],
+        calls: ["agent"],
+        tickets: ["agent"],
+        "knowledge-base": ["agent"],
+        qa: ["qa_lead"],
+        reports: ["supervisor"],
+        "client-portal": ["client"],
+        "admin-dashboard": ["admin"]
+    };
+
+    const publicPages = new Set(["landing", "login", "signup", "forgot-password", "reset-password"]);
+    loadCurrentUser().then(function (user) {
+        if (publicPages.has(page)) {
+            if (user && page !== "reset-password") {
+                window.location.href = getRoleRedirectPath(user.role);
+            }
+            return;
+        }
+
+        const allowedRoles = protectedPageRoles[page];
+        if (allowedRoles) {
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+            if (!allowedRoles.includes(user.role)) {
+                window.location.href = getRoleRedirectPath(user.role);
+                return;
+            }
+            updateUserDisplay(user);
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    guardPageFromSession();
+    loadCurrentUser().then(function (user) {
+        if (user) {
+            setupRoleBasedNav();
+            updateUserDisplay(user);
+        }
+    });
 });
+
+window.Auth = {
+    storeSession,
+    loadCurrentUser,
+    checkAuthentication,
+    getCurrentUserRole,
+    logout,
+    requireRole,
+    getRoleRedirectPath,
+    roleDescriptions
+};

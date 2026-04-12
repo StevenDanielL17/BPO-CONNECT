@@ -8,7 +8,7 @@ Generated: March 29, 2026
 
 ## 📋 Role Login Options
 
-All 5 roles available in login form (frontend/login.html):
+All 5 roles available in login form (src/main/resources/static/login.html):
 
 ```
 <select id="role" name="role" required>

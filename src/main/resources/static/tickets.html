@@ -13,7 +13,8 @@
     <link rel="stylesheet" href="assets/css/components.css">
 </head>
 <body data-page="tickets">
-    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/api-client.js?v=20260412"></script>
+    <script src="assets/js/auth.js?v=20260412"></script>
     <script>
         requireRole('agent');
     </script>
@@ -21,19 +22,58 @@
         <aside class="sidebar">
             <div class="brand"><p class="kicker">BPO Connect</p><h2 class="title">Agent Workspace</h2><small id="userDisplay">Agent</small></div>
             <nav class="nav-list" aria-label="Primary">
-                <a class="nav-item" data-nav data-route="calls" href="calls.html">📞 Calls & Screen Pop</a>
-                <a class="nav-item active" data-nav data-route="tickets" href="tickets.html">🎫 Ticket Workspace</a>
-                <a class="nav-item" data-nav data-route="knowledge-base" href="knowledge-base.html">📚 Knowledge Base</a>
+                <a class="nav-item" data-nav data-route="calls" href="calls.html">Calls and Screen Pop</a>
+                <a class="nav-item active" data-nav data-route="tickets" href="tickets.html">Ticket Workspace</a>
+                <a class="nav-item" data-nav data-route="knowledge-base" href="knowledge-base.html">Knowledge Base</a>
             </nav>
-            <nav class="nav-list" aria-label="Account" style="border-top: 1px solid var(--color-slate-700); margin-top: 20px; padding-top: 20px;">
-                <button onclick="logout()" class="nav-item" style="text-align: left; background: none; border: none; cursor: pointer; width: 100%;">🚪 Logout</button>
+            <nav class="nav-list" aria-label="Account" style="border-top: 1px solid var(--color-neutral-200); margin-top: 20px; padding-top: 20px;">
+                <button onclick="logout()" class="nav-item" style="text-align: left; background: none; border: none; cursor: pointer; width: 100%;">Logout</button>
             </nav>
         </aside>
 
         <main class="content">
             <section class="topbar">
                 <div><h1>Ticket Workspace</h1><p>Handle and track customer support tickets efficiently.</p></div>
-                <div class="actions"><button class="btn btn-primary" onclick="location.reload()">🔄 Refresh</button></div>
+                <div class="actions"><button class="btn btn-primary" onclick="location.reload()">Refresh</button></div>
+            </section>
+
+            <section class="page-grid">
+                <article class="card col-12">
+                    <h2>Create Ticket</h2>
+                    <div id="ticket-draft-banner" class="status-banner">No draft loaded. You can create a ticket manually or use KB/Calls to prefill one.</div>
+                    <div class="input-row" style="margin-top: 12px;">
+                        <div class="form-group">
+                            <label for="ticketCustomerId">Customer ID</label>
+                            <input id="ticketCustomerId" placeholder="C001">
+                        </div>
+                        <div class="form-group">
+                            <label for="ticketChannel">Channel</label>
+                            <select id="ticketChannel">
+                                <option value="voice">Voice</option>
+                                <option value="chat">Chat</option>
+                                <option value="email">Email</option>
+                                <option value="general">General</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ticketSeverity">Severity</label>
+                            <select id="ticketSeverity">
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                                <option value="Critical">Critical</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ticketDescription">Description</label>
+                        <textarea id="ticketDescription" placeholder="Describe the issue, summary from KB, or call notes"></textarea>
+                    </div>
+                    <div class="actions">
+                        <button id="createTicketBtn" class="btn btn-primary">Create Ticket</button>
+                        <button id="clearTicketDraftBtn" class="btn btn-secondary">Clear Draft</button>
+                    </div>
+                </article>
             </section>
 
             <section class="page-grid">
@@ -45,17 +85,17 @@
                             <input id="searchInput" placeholder="Search ticket or customer..." style="width: 100%; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; color: #1e293b;">
                         </div>
                         <div>
-                            <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #64748b; font-size: 0.85rem;\">Severity</label>
+                            <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #64748b; font-size: 0.85rem;">Severity</label>
                             <select id="severityFilter" style="width: 100%; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; color: #1e293b;">
                                 <option value="">All Severities</option>
-                                <option value="Critical">🔴 Critical</option>
-                                <option value="High">🟠 High</option>
-                                <option value="Medium">🟡 Medium</option>
-                                <option value="Low">🟢 Low</option>
+                                <option value="Critical">Critical</option>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
                             </select>
                         </div>
                         <div>
-                            <label style=\"display: block; margin-bottom: 6px; font-weight: 600; color: #64748b; font-size: 0.85rem;\">Status</label>
+                            <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #64748b; font-size: 0.85rem;">Status</label>
                             <select id="statusFilter" style="width: 100%; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; color: #1e293b;">
                                 <option value="">All Status</option>
                                 <option value="New">New</option>
@@ -75,35 +115,177 @@
                         </table>
                     </div>
                 </article>
+
+                <article class="card col-6">
+                    <h2>Follow-Up Reminders</h2>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="reminderTicketId">Ticket ID</label>
+                            <input id="reminderTicketId" placeholder="TICKET-1001">
+                        </div>
+                        <div class="form-group">
+                            <label for="reminderAt">Reminder Time</label>
+                            <input id="reminderAt" type="datetime-local">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reminderNotes">Notes</label>
+                        <input id="reminderNotes" placeholder="Call customer after backend review">
+                    </div>
+                    <div class="actions">
+                        <button id="createReminderBtn" class="btn btn-primary">Create Reminder</button>
+                        <button id="refreshRemindersBtn" class="btn btn-secondary">Refresh</button>
+                    </div>
+                    <div id="remindersList" class="timeline" style="margin-top: 12px;"></div>
+                </article>
+
+                <article class="card col-6">
+                    <h2>Internal Team Chat</h2>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="chatRecipientId">Recipient ID</label>
+                            <input id="chatRecipientId" placeholder="SUP-01 or QA-01">
+                        </div>
+                        <div class="form-group">
+                            <label for="chatMessage">Message</label>
+                            <input id="chatMessage" placeholder="Requesting support on the pending escalation">
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button id="sendChatBtn" class="btn btn-primary">Send Message</button>
+                        <button id="refreshChatBtn" class="btn btn-secondary">Refresh</button>
+                    </div>
+                    <div id="chatFeed" class="timeline" style="margin-top: 12px;"></div>
+                </article>
             </section>
         </main>
     </div>
 
     <nav class="mobile-nav" aria-label="Mobile">
-        <a href="calls.html" data-mobile-nav data-route="calls">📞 Calls</a>
-        <a href="tickets.html" data-mobile-nav data-route="tickets">🎫 Tickets</a>
-        <a href="knowledge-base.html" data-mobile-nav data-route="knowledge-base">📚 KB</a>
+        <a href="calls.html" data-mobile-nav data-route="calls">Calls</a>
+        <a href="tickets.html" data-mobile-nav data-route="tickets">Tickets</a>
+        <a href="knowledge-base.html" data-mobile-nav data-route="knowledge-base">Knowledge Base</a>
     </nav>
 
-    <script src="assets/js/api-client.js"></script>
-    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/nav.js?v=20260412"></script>
     <script>
         let allTickets = [];
+        let ticketDraft = null;
+        let selectedTicketId = null;
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
 
         // Load tickets on page load
         document.addEventListener('DOMContentLoaded', function() {
+            loadTicketDraft();
             loadAllTickets();
+            loadReminders();
+            loadChatMessages();
             
             // Add filter event listeners
             document.getElementById('searchInput').addEventListener('input', filterTickets);
             document.getElementById('severityFilter').addEventListener('change', filterTickets);
             document.getElementById('statusFilter').addEventListener('change', filterTickets);
+
+            document.getElementById('createTicketBtn').addEventListener('click', createAgentTicket);
+            document.getElementById('clearTicketDraftBtn').addEventListener('click', clearTicketDraft);
+            document.getElementById('createReminderBtn').addEventListener('click', createReminder);
+            document.getElementById('refreshRemindersBtn').addEventListener('click', loadReminders);
+            document.getElementById('sendChatBtn').addEventListener('click', sendChatMessage);
+            document.getElementById('refreshChatBtn').addEventListener('click', loadChatMessages);
         });
+
+        function loadTicketDraft() {
+            const rawDraft = sessionStorage.getItem('bpoConnect.ticketDraft') || sessionStorage.getItem('bpoConnect.kbDraft') || sessionStorage.getItem('bpoConnect.callDraft');
+            const banner = document.getElementById('ticket-draft-banner');
+
+            if (!rawDraft) {
+                if (banner) {
+                    banner.textContent = 'No draft loaded. You can create a ticket manually or use KB/Calls to prefill one.';
+                }
+                return;
+            }
+
+            try {
+                ticketDraft = JSON.parse(rawDraft);
+                const customerIdInput = document.getElementById('ticketCustomerId');
+                const channelInput = document.getElementById('ticketChannel');
+                const severityInput = document.getElementById('ticketSeverity');
+                const descriptionInput = document.getElementById('ticketDescription');
+
+                if (customerIdInput && ticketDraft.customerId) customerIdInput.value = ticketDraft.customerId;
+                if (channelInput && ticketDraft.channel) channelInput.value = ticketDraft.channel;
+                if (severityInput && ticketDraft.severity) severityInput.value = ticketDraft.severity;
+                if (descriptionInput && ticketDraft.description) descriptionInput.value = ticketDraft.description;
+
+                if (banner) {
+                    banner.textContent = ticketDraft.source ? `Draft loaded from ${ticketDraft.source}.` : 'Draft loaded from KB or Calls.';
+                }
+            } catch (error) {
+                console.error('Draft load error:', error);
+            }
+        }
+
+        function clearTicketDraft() {
+            sessionStorage.removeItem('bpoConnect.ticketDraft');
+            sessionStorage.removeItem('bpoConnect.kbDraft');
+            sessionStorage.removeItem('bpoConnect.callDraft');
+            ticketDraft = null;
+            const banner = document.getElementById('ticket-draft-banner');
+            if (banner) {
+                banner.textContent = 'Draft cleared.';
+            }
+        }
+
+        async function createAgentTicket() {
+            const currentUser = await Auth.loadCurrentUser();
+            const customerId = document.getElementById('ticketCustomerId').value.trim();
+            const channel = document.getElementById('ticketChannel').value;
+            const severity = document.getElementById('ticketSeverity').value;
+            const description = document.getElementById('ticketDescription').value.trim();
+
+            if (!customerId || !description) {
+                alert('Customer ID and description are required.');
+                return;
+            }
+
+            try {
+                const ticket = await ApiClient.post('/tickets', {
+                    customerId,
+                    channel,
+                    severity,
+                    description,
+                    agentId: currentUser ? currentUser.userId || currentUser.email : 'A101',
+                    referenceId: `AGENT-${Date.now()}`
+                });
+
+                sessionStorage.removeItem('bpoConnect.ticketDraft');
+                sessionStorage.removeItem('bpoConnect.kbDraft');
+                sessionStorage.removeItem('bpoConnect.callDraft');
+                ticketDraft = null;
+                document.getElementById('createTicketBtn').textContent = 'Create Ticket';
+                document.getElementById('ticketDescription').value = '';
+                const banner = document.getElementById('ticket-draft-banner');
+                if (banner) {
+                    banner.textContent = `Ticket ${ticket.ticketId} created successfully.`;
+                }
+                loadAllTickets();
+            } catch (error) {
+                console.error('Agent ticket creation error:', error);
+                alert(error.message || 'Failed to create ticket.');
+            }
+        }
 
         async function loadAllTickets() {
             try {
-                const response = await fetch('/api/tickets');
-                allTickets = await response.json();
+                allTickets = await ApiClient.get('/tickets');
                 renderTickets(allTickets);
             } catch (error) {
                 console.error('Error loading tickets:', error);
@@ -125,13 +307,14 @@
                 
                 return `
                     <tr>
-                        <td><strong>${ticket.ticketId}</strong></td>
-                        <td>${ticket.customerId || 'N/A'}</td>
-                        <td>${ticket.channel || 'General'}</td>
-                        <td><span class="chip chip-${severityClass}">${ticket.severity}</span></td>
-                        <td><span class="chip chip-${statusClass}">${ticket.status}</span></td>
-                        <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${ticket.description || 'No description'}</td>
+                        <td><strong>${escapeHtml(ticket.ticketId)}</strong></td>
+                        <td>${escapeHtml(ticket.customerId || 'N/A')}</td>
+                        <td>${escapeHtml(ticket.channel || 'General')}</td>
+                        <td><span class="chip chip-${severityClass}">${escapeHtml(ticket.severity)}</span></td>
+                        <td><span class="chip chip-${statusClass}">${escapeHtml(ticket.status)}</span></td>
+                        <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(ticket.description || 'No description')}</td>
                         <td>
+                            <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.9rem; margin-right: 5px;" onclick="selectTicket('${ticket.ticketId}')">Select</button>
                             <button class="btn btn-primary" style="padding: 5px 10px; font-size: 0.9rem; margin-right: 5px;" onclick="updateTicketStatus('${ticket.ticketId}', 'InProgress')">Take</button>
                             <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.9rem;" onclick="escalateTicket('${ticket.ticketId}')">Escalate</button>
                         </td>
@@ -162,18 +345,9 @@
 
         async function updateTicketStatus(ticketId, newStatus) {
             try {
-                const response = await fetch(`/api/tickets/${ticketId}/status`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ status: newStatus })
-                });
-
-                if (response.ok) {
-                    alert('Ticket status updated to: ' + newStatus);
-                    loadAllTickets();
-                }
+                await ApiClient.put(`/tickets/${ticketId}/status`, { status: newStatus });
+                alert('Ticket status updated to: ' + newStatus);
+                loadAllTickets();
             } catch (error) {
                 console.error('Error updating ticket:', error);
             }
@@ -181,17 +355,142 @@
 
         async function escalateTicket(ticketId) {
             try {
-                const response = await fetch(`/api/tickets/${ticketId}/escalate`, {
-                    method: 'POST'
-                });
-                if (response.ok) {
-                    alert('Ticket escalated successfully!');
-                    loadAllTickets();
-                }
+                await ApiClient.post(`/tickets/${ticketId}/escalate`, {});
+                alert('Ticket escalated successfully!');
+                loadAllTickets();
             } catch (error) {
                 console.error('Error escalating ticket:', error);
             }
         }
+
+        function selectTicket(ticketId) {
+            const ticket = allTickets.find(function (item) {
+                return item.ticketId === ticketId;
+            });
+
+            if (!ticket) {
+                return;
+            }
+
+            selectedTicketId = ticketId;
+            const draft = {
+                source: 'Selected Ticket',
+                customerId: ticket.customerId || '',
+                channel: ticket.channel || 'general',
+                severity: ticket.severity || 'Medium',
+                description: ticket.description || ''
+            };
+            sessionStorage.setItem('bpoConnect.ticketDraft', JSON.stringify(draft));
+            loadTicketDraft();
+        }
+
+        async function loadReminders() {
+            const container = document.getElementById('remindersList');
+            if (!container) {
+                return;
+            }
+
+            try {
+                const reminders = await ApiClient.get('/reminders');
+                if (!Array.isArray(reminders) || reminders.length === 0) {
+                    container.innerHTML = '<div class="status-banner">No reminders scheduled.</div>';
+                    return;
+                }
+
+                container.innerHTML = reminders.map(reminder => `
+                    <div class="timeline-item">
+                        <strong>${escapeHtml(reminder.ticketId || 'Unknown ticket')}</strong>
+                        <div>${escapeHtml(reminder.notes || 'No notes')}</div>
+                        <small>${reminder.reminderAt ? new Date(reminder.reminderAt).toLocaleString() : ''}</small>
+                        <div class="actions" style="margin-top: 8px;">
+                            ${reminder.completed ? '<span class="chip chip-resolved">Completed</span>' : `<button class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.9rem;" onclick="completeReminder('${reminder.reminderId}')">Mark Complete</button>`}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading reminders:', error);
+                container.innerHTML = '<div class="status-banner">Failed to load reminders.</div>';
+            }
+        }
+
+        async function createReminder() {
+            const ticketId = document.getElementById('reminderTicketId').value.trim();
+            const reminderAtValue = document.getElementById('reminderAt').value;
+            const notes = document.getElementById('reminderNotes').value.trim();
+
+            if (!ticketId || !reminderAtValue) {
+                alert('Ticket ID and reminder time are required.');
+                return;
+            }
+
+            try {
+                await ApiClient.post('/reminders', {
+                    ticketId,
+                    reminderAt: new Date(reminderAtValue).toISOString(),
+                    notes
+                });
+
+                document.getElementById('reminderNotes').value = '';
+                loadReminders();
+            } catch (error) {
+                console.error('Error creating reminder:', error);
+            }
+        }
+
+        async function completeReminder(reminderId) {
+            try {
+                await ApiClient.patch(`/reminders/${reminderId}/complete`, {});
+                loadReminders();
+            } catch (error) {
+                console.error('Error completing reminder:', error);
+            }
+        }
+
+        async function loadChatMessages() {
+            const container = document.getElementById('chatFeed');
+            if (!container) {
+                return;
+            }
+
+            try {
+                const messages = await ApiClient.get('/chat/messages');
+                if (!Array.isArray(messages) || messages.length === 0) {
+                    container.innerHTML = '<div class="status-banner">No internal messages yet.</div>';
+                    return;
+                }
+
+                container.innerHTML = messages.slice(0, 8).map(message => `
+                    <div class="timeline-item">
+                        <strong>${escapeHtml(message.senderId || 'Unknown')}</strong> to ${escapeHtml(message.recipientId || 'Unknown')}
+                        <div>${escapeHtml(message.message || '')}</div>
+                        <small>${message.createdAt ? new Date(message.createdAt).toLocaleString() : ''}</small>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading chat messages:', error);
+                container.innerHTML = '<div class="status-banner">Failed to load internal chat.</div>';
+            }
+        }
+
+        async function sendChatMessage() {
+            const recipientId = document.getElementById('chatRecipientId').value.trim();
+            const message = document.getElementById('chatMessage').value.trim();
+
+            if (!recipientId || !message) {
+                alert('Recipient and message are required.');
+                return;
+            }
+
+            try {
+                await ApiClient.post('/chat/messages', { recipientId, message });
+                document.getElementById('chatMessage').value = '';
+                loadChatMessages();
+            } catch (error) {
+                console.error('Error sending chat message:', error);
+            }
+        }
+
+        window.selectTicket = selectTicket;
     </script>
 </body>
 </html>

@@ -25,13 +25,13 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        const currentUser = localStorage.getItem("currentUser") || "A101";
+        const currentUser = Auth.checkAuthentication();
         const payload = {
             customerId,
             channel,
             severity,
             description,
-            agentId: currentUser,
+            agentId: currentUser ? currentUser.userId || currentUser.email : "A101",
             referenceId: `REF-${Math.floor(Math.random() * 1000)}`
         };
 

@@ -17,7 +17,7 @@ BPO-CONNECT is a Spring Boot based customer support platform for BPO workflows. 
 - Spring Boot 3.2.3
 - Spring Web
 - Spring Data JPA
-- H2 Database (runtime)
+- PostgreSQL / Supabase-compatible Database (default runtime)
 - Maven
 
 ## Project Structure
@@ -150,12 +150,14 @@ docker compose down
 Once the app starts, use:
 
 - Base URL: `http://localhost:8080`
-- New Frontend: `http://localhost:8080/frontend/index.html`
+  - New Frontend: `http://localhost:8080/index.html`
 
 ## Notes
 
 - The repository ignores generated output in `target/` via `.gitignore`.
-- H2 is configured as a runtime dependency for simple local execution.
+- The app loads database settings from the repo `.env` file automatically and defaults to Postgres/Supabase via `DB_POOLER_URL` if present, otherwise `DB_URL`, plus `DB_USERNAME` and `DB_PASSWORD`.
+- H2 remains only as a runtime dependency for optional fallback/testing, not the default app database.
+- If Supabase direct connection is IPv4-blocked in your network, set `DB_POOLER_URL` to the Supabase session pooler connection string.
 - Containerization files are included: `Dockerfile`, `.dockerignore`, `docker-compose.yml`.
 - Docker profile overrides are in `src/main/resources/application-docker.properties`.
 - QA audit summary is available in `docs/qa-report.md`.

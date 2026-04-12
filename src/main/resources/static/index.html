@@ -11,59 +11,85 @@
     <link rel="stylesheet" href="assets/css/base.css">
     <link rel="stylesheet" href="assets/css/layout.css">
     <link rel="stylesheet" href="assets/css/components.css">
-    <style>
-        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
-        .landing-container { max-width: 1200px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; gap: 60px; text-align: center; }
-        .landing-hero { color: white; }
-        .landing-hero h1 { font-size: 3.5rem; font-weight: 700; margin: 20px 0; background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .landing-hero p { font-size: 1.2rem; color: #cbd5e1; margin: 15px 0; line-height: 1.6; }
-        .landing-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; width: 100%; margin: 40px 0; }
-        .feature-card { background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; padding: 30px; border-radius: 12px; }
-        .feature-card h3 { color: #60a5fa; margin-bottom: 10px; }
-        .feature-card p { color: #cbd5e1; font-size: 0.95rem; }
-        .landing-cta { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-        .btn-login { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; padding: 14px 32px; font-size: 1.1rem; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; font-weight: 600; transition: all 0.3s; }
-        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4); }
-        .footer-text { color: #64748b; font-size: 0.9rem; }
-    </style>
+    <link rel="stylesheet" href="assets/css/public-pages.css">
 </head>
 <body data-page="landing">
     <div class="landing-container">
         <section class="landing-hero">
-            <p style="color: #60a5fa; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;">Welcome to</p>
+            <p class="landing-kicker">Welcome to</p>
             <h1>BPO Connect</h1>
-            <p>Unified Operations Platform for Customer Success</p>
-            <p style="font-size: 1rem; color: #94a3b8; max-width: 600px; margin: 20px auto;">Streamline your BPO operations with integrated tools for call management, ticket handling, knowledge base access, and comprehensive reporting.</p>
+            <p class="landing-subtitle">Unified Operations Platform for Customer Success</p>
+            <p class="landing-description">Streamline your BPO operations with integrated tools for call management, ticket handling, knowledge base access, and comprehensive reporting.</p>
+            <section class="landing-cta landing-cta-top">
+                <a href="login.html" class="btn btn-primary">Sign In</a>
+                <a href="signup.html" class="btn btn-secondary">Create Account</a>
+            </section>
         </section>
 
-        <section class="landing-features">
+        <section class="landing-features landing-features-top">
             <div class="feature-card">
-                <h3>📞 For Agents</h3>
+                <h3>For Agents</h3>
                 <p>Handle inbound calls with screen pop, manage tickets, and access real-time customer information.</p>
             </div>
             <div class="feature-card">
-                <h3>👔 For Supervisors</h3>
+                <h3>For Supervisors</h3>
                 <p>Monitor team performance, track metrics, and generate comprehensive reports.</p>
             </div>
             <div class="feature-card">
-                <h3>⚙️ For QA Leads</h3>
+                <h3>For QA Leads</h3>
                 <p>Evaluate agent performance and manage quality assurance workflows.</p>
             </div>
+        </section>
+
+        <section class="landing-features landing-features-bottom">
             <div class="feature-card">
-                <h3>👤 For Customers</h3>
+                <h3>For Customers</h3>
                 <p>Track your tickets and interact with our support team through our client portal.</p>
             </div>
             <div class="feature-card">
-                <h3>🔐 For Admin</h3>
+                <h3>For Admin</h3>
                 <p>Manage system configuration, user access, and platform settings.</p>
             </div>
         </section>
 
-        <section class="landing-cta">
-            <a href="login.html" class="btn-login">Sign In</a>
+        <section class="landing-health">
+            <div class="landing-health-header">
+                <h2>How the platform works</h2>
+            </div>
+            <div class="landing-features" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                <div class="feature-card">
+                    <h3>1. Login by role</h3>
+                    <p>Agents, supervisors, QA, clients, and admins sign in with seeded role-specific credentials.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>2. Handle live work</h3>
+                    <p>Agents answer calls, create tickets, search the knowledge base, and share updates with the team.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>3. Supervise operations</h3>
+                    <p>Supervisors review queues, internal chat, and report snapshots from the same backend data.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="landing-features">
+            <div class="feature-card">
+                <h3>Real backend data</h3>
+                <p>Tickets, knowledge base articles, queue state, and audit logs are served from Spring Boot and PostgreSQL-compatible storage.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Role-aware access</h3>
+                <p>Each workspace is routed by role so agents, supervisors, QA, and admins see the correct tools.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Responsive interface</h3>
+                <p>The layout adapts to desktop and mobile so the same system works in the office or on the move.</p>
+            </div>
         </section>
 
         <p class="footer-text">BPO Connect © 2026 | Unified Customer Service Operations</p>
     </div>
+    <script src="assets/js/api-client.js"></script>
+    <script src="assets/js/pages/index.js"></script>
 </body>
 </html>

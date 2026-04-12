@@ -12,7 +12,10 @@ import com.bpoconnect.repository.TicketRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Objects;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,13 +26,15 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final SLARepository slaRepository;
     private final List<ITicketObserver> observers;
+    private final AuditService auditService;
 
 
-    public TicketService(TicketFactory ticketFactory, TicketRepository ticketRepository, SLARepository slaRepository, List<ITicketObserver> observers) {
+    public TicketService(TicketFactory ticketFactory, TicketRepository ticketRepository, SLARepository slaRepository, List<ITicketObserver> observers, AuditService auditService) {
         this.ticketFactory = ticketFactory;
         this.ticketRepository = ticketRepository;
         this.slaRepository = slaRepository;
         this.observers = observers;
+        this.auditService = auditService;
     }
 
     public void registerObserver(ITicketObserver observer) {
@@ -47,32 +52,31 @@ public class TicketService {
         String normalizedSeverity = (severity == null || severity.trim().isEmpty()) ? "Low" : severity.trim();
         Ticket ticket = ticketFactory.createTicket(channel, customerId, agentId, normalizedSeverity, description, referenceId);
         
-        // Assign SLA Strategy
-        SLA sla;
-        String slaId = "SLA-" + UUID.randomUUID().toString().substring(0, 4);
-        switch (normalizedSeverity.toLowerCase()) {
-            case "critical":
-                sla = new SLA(slaId, normalizedSeverity, new CriticalEscalation());
-                break;
-            case "high":
-                sla = new SLA(slaId, normalizedSeverity, new HighPriorityEscalation());
-                break;
-            default:
-                sla = new SLA(slaId, normalizedSeverity, new LowPriorityEscalation());
-                break;
+        SLA sla = slaRepository.findFirstByPriorityLevelIgnoreCase(normalizedSeverity).orElse(null);
+
+        if (sla == null) {
+            String slaId = "SLA-" + UUID.randomUUID().toString().substring(0, 4);
+            sla = switch (normalizedSeverity.toLowerCase()) {
+                case "critical" -> new SLA(slaId, normalizedSeverity, new CriticalEscalation());
+                case "high" -> new SLA(slaId, normalizedSeverity, new HighPriorityEscalation());
+                default -> new SLA(slaId, normalizedSeverity, new LowPriorityEscalation());
+            };
+            slaRepository.save(sla);
+        } else {
+            attachStrategy(sla);
         }
 
-        ticket = ticketRepository.save(ticket);
-        slaRepository.save(sla);
+        ticket = ticketRepository.save(Objects.requireNonNull(ticket, "ticket"));
         
         System.out.println("[TicketService] Created ticket " + ticket.getTicketId() + ". Assigned SLA threshold: " + sla.getEscalationThreshold() + " mins.");
         notifyObservers(ticket.getTicketId(), ticket.getStatus());
+        auditService.log(ticket.getAgentId(), ticket.getTicketId(), "TICKET_CREATED", "Channel=" + ticket.getChannel() + ", Severity=" + ticket.getSeverity());
         
         return ticket;
     }
 
     public Ticket getTicket(String ticketId) {
-        return ticketRepository.findById(ticketId).orElse(null);
+        return ticketRepository.findById(Objects.requireNonNull(ticketId, "ticketId")).orElse(null);
     }
 
     public List<Ticket> getAllTickets() {
@@ -81,11 +85,12 @@ public class TicketService {
 
     @Transactional
     public void updateTicketStatus(String ticketId, String newStatus) {
-        Ticket ticket = ticketRepository.findById(ticketId).orElse(null);
+        Ticket ticket = ticketRepository.findById(Objects.requireNonNull(ticketId, "ticketId")).orElse(null);
         if (ticket != null) {
             ticket.updateStatus(newStatus);
             ticketRepository.save(ticket);
             notifyObservers(ticketId, newStatus);
+            auditService.log(ticket.getAgentId(), ticketId, "TICKET_STATUS_CHANGED", newStatus);
         }
     }
 
@@ -95,7 +100,7 @@ public class TicketService {
         Ticket ticket = getTicket(ticketId);
         if (ticket != null) {
             String severity = normalizeSeverity(ticket.getSeverity());
-            SLA sla = slaRepository.findFirstByPriorityLevel(severity).orElse(null);
+            SLA sla = slaRepository.findFirstByPriorityLevelIgnoreCase(severity).orElse(null);
             if (sla == null) {
                 // Default if not found
                 sla = new SLA("DEF", severity, new LowPriorityEscalation());
@@ -105,16 +110,44 @@ public class TicketService {
             }
             sla.triggerEscalation(ticketId);
             updateTicketStatus(ticketId, "Escalated");
+            auditService.log(ticket.getAgentId(), ticketId, "TICKET_ESCALATED", "Manual or SLA-triggered escalation");
         }
     }
 
     private void attachStrategy(SLA sla) {
         String priorityLevel = normalizeSeverity(sla.getPriorityLevel());
         switch (priorityLevel.toLowerCase()) {
-            case "critical": sla.setStrategy(new CriticalEscalation()); break;
-            case "high": sla.setStrategy(new HighPriorityEscalation()); break;
-            default: sla.setStrategy(new LowPriorityEscalation()); break;
+            case "critical" -> sla.setStrategy(new CriticalEscalation());
+            case "high" -> sla.setStrategy(new HighPriorityEscalation());
+            default -> sla.setStrategy(new LowPriorityEscalation());
         }
+    }
+
+    @Transactional
+    public Ticket deleteTicket(String ticketId, String requestedBy) {
+        Ticket ticket = ticketRepository.findById(Objects.requireNonNull(ticketId, "ticketId"))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found"));
+        auditService.log(requestedBy, ticketId, "TICKET_DELETED", "Permanent delete requested");
+        ticketRepository.delete(Objects.requireNonNull(ticket, "ticket"));
+        return ticket;
+    }
+
+    @Transactional
+    public Ticket transferTicket(String ticketId, String targetAgentId, String requestedBy) {
+        Ticket ticket = ticketRepository.findById(Objects.requireNonNull(ticketId, "ticketId"))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found"));
+
+        String safeTargetAgentId = Objects.requireNonNull(targetAgentId, "targetAgentId").trim();
+        if (safeTargetAgentId.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Target agent is required");
+        }
+
+        ticket.setAgentId(safeTargetAgentId);
+        ticket.updateStatus(ticket.getStatus() == null ? "Open" : ticket.getStatus());
+        Ticket savedTicket = ticketRepository.save(ticket);
+        auditService.log(requestedBy, ticketId, "TICKET_TRANSFERRED", "Transferred to " + safeTargetAgentId);
+        notifyObservers(ticketId, savedTicket.getStatus());
+        return savedTicket;
     }
 
     private String normalizeSeverity(String severity) {

@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="assets/css/components.css">
 </head>
 <body data-page="dashboard">
+    <script src="assets/js/api-client.js?v=20260412"></script>
+    <script src="assets/js/auth.js?v=20260412"></script>
     <div class="app-shell">
         <aside class="sidebar">
             <div class="brand">
@@ -46,7 +48,7 @@
             <section class="kpi-grid">
                 <article class="kpi-card">
                     <p class="kpi-label">Open Tickets</p>
-                    <p class="kpi-value">128</p>
+                    <p id="kpi-open" class="kpi-value">128</p>
                     <p class="delta down">+9% from previous window</p>
                 </article>
                 <article class="kpi-card">
@@ -56,7 +58,7 @@
                 </article>
                 <article class="kpi-card">
                     <p class="kpi-label">Escalations</p>
-                    <p class="kpi-value">22</p>
+                    <p id="kpi-escalated" class="kpi-value">22</p>
                     <p class="delta down">+3 unresolved</p>
                 </article>
                 <article class="kpi-card">
@@ -75,7 +77,10 @@
                         <button>Email</button>
                         <button>Critical</button>
                     </div>
-                    <p>Chart placeholder: queue by channel and severity with click-through to Ticket Workspace.</p>
+                    <div id="queue-summary" class="status-banner">Loading queue metrics...</div>
+                    <div id="queue-stack" class="queue-stack">
+                        <p>Loading live queue...</p>
+                    </div>
                 </article>
 
                 <article class="card col-4">
@@ -103,7 +108,27 @@
 
                 <article class="card col-6">
                     <h2>Team Performance Trend</h2>
-                    <p>Chart placeholder: daily trend line for FCR, average handling time, and customer sentiment.</p>
+                    <p>Track daily resolution trends, handling time, and customer sentiment.</p>
+                    <div class="status-banner" id="team-trend-summary">Loading trend summary...</div>
+                </article>
+
+                <article class="card col-6">
+                    <h2>Internal Team Chat</h2>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="dashboard-chat-recipient">Recipient ID</label>
+                            <input id="dashboard-chat-recipient" placeholder="A101 or TEAM_LEAD">
+                        </div>
+                        <div class="form-group">
+                            <label for="dashboard-chat-message">Message</label>
+                            <input id="dashboard-chat-message" placeholder="Send a short update">
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button id="dashboard-chat-send" class="btn btn-primary">Send Message</button>
+                        <button id="dashboard-chat-refresh" class="btn btn-secondary">Refresh</button>
+                    </div>
+                    <div id="dashboard-chat-feed" class="timeline" style="margin-top: 12px;"></div>
                 </article>
             </section>
         </main>
@@ -117,8 +142,7 @@
         <a href="reports.html" data-mobile-nav data-route="reports">Reports</a>
     </nav>
 
-    <script src="assets/js/api-client.js"></script>
-    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/nav.js?v=20260412"></script>
     <script src="assets/js/pages/dashboard.js"></script>
 </body>
 </html>

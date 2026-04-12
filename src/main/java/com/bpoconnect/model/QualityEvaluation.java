@@ -15,6 +15,8 @@ public class QualityEvaluation {
     private double score;
     private String feedback;
     private LocalDateTime evaluationDate;
+    private boolean flaggedForCoaching;
+    private String coachingNotes;
 
     public QualityEvaluation() {}
 
@@ -26,6 +28,78 @@ public class QualityEvaluation {
         this.score = score;
         this.feedback = feedback;
         this.evaluationDate = LocalDateTime.now();
+    }
+
+    public String getEvalId() {
+        return evalId;
+    }
+
+    public void setEvalId(String evalId) {
+        this.evalId = evalId;
+    }
+
+    public String getTicketId() {
+        return ticketId;
+    }
+
+    public void setTicketId(String ticketId) {
+        this.ticketId = ticketId;
+    }
+
+    public String getAgentId() {
+        return agentId;
+    }
+
+    public void setAgentId(String agentId) {
+        this.agentId = agentId;
+    }
+
+    public String getEvaluatorId() {
+        return evaluatorId;
+    }
+
+    public void setEvaluatorId(String evaluatorId) {
+        this.evaluatorId = evaluatorId;
+    }
+
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
+    }
+
+    public String getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(String feedback) {
+        this.feedback = feedback;
+    }
+
+    public LocalDateTime getEvaluationDate() {
+        return evaluationDate;
+    }
+
+    public void setEvaluationDate(LocalDateTime evaluationDate) {
+        this.evaluationDate = evaluationDate;
+    }
+
+    public boolean isFlaggedForCoaching() {
+        return flaggedForCoaching;
+    }
+
+    public void setFlaggedForCoaching(boolean flaggedForCoaching) {
+        this.flaggedForCoaching = flaggedForCoaching;
+    }
+
+    public String getCoachingNotes() {
+        return coachingNotes;
+    }
+
+    public void setCoachingNotes(String coachingNotes) {
+        this.coachingNotes = coachingNotes;
     }
 }
 

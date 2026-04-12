@@ -13,7 +13,8 @@
     <link rel="stylesheet" href="assets/css/components.css">
 </head>
 <body data-page="knowledge-base">
-    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/api-client.js?v=20260412"></script>
+    <script src="assets/js/auth.js?v=20260412"></script>
     <script>
         requireRole('agent');
     </script>
@@ -21,20 +22,22 @@
         <aside class="sidebar">
             <div class="brand"><p class="kicker">BPO Connect</p><h2 class="title">Agent Workspace</h2><small id="userDisplay">Agent</small></div>
             <nav class="nav-list" aria-label="Primary">
-                <a class="nav-item" data-nav data-route="calls" href="calls.html">📞 Calls & Screen Pop</a>
-                <a class="nav-item" data-nav data-route="tickets" href="tickets.html">🎫 Ticket Workspace</a>
-                <a class="nav-item active" data-nav data-route="knowledge-base" href="knowledge-base.html">📚 Knowledge Base</a>
+                <a class="nav-item" data-nav data-route="calls" href="calls.html">Calls and Screen Pop</a>
+                <a class="nav-item" data-nav data-route="tickets" href="tickets.html">Ticket Workspace</a>
+                <a class="nav-item active" data-nav data-route="knowledge-base" href="knowledge-base.html">Knowledge Base</a>
             </nav>
-            <nav class="nav-list" aria-label="Account" style="border-top: 1px solid var(--color-slate-700); margin-top: 20px; padding-top: 20px;">
-                <button onclick="logout()" class="nav-item" style="text-align: left; background: none; border: none; cursor: pointer; width: 100%;">🚪 Logout</button>
+            <nav class="nav-list" aria-label="Account" style="border-top: 1px solid var(--color-neutral-200); margin-top: 20px; padding-top: 20px;">
+                <button onclick="logout()" class="nav-item" style="text-align: left; background: none; border: none; cursor: pointer; width: 100%;">Logout</button>
             </nav>
         </aside>
 
         <main class="content">
             <section class="topbar">
                 <div><h1>Knowledge Base</h1><p>Faster article discovery for first-contact resolution.</p></div>
-                <div class="actions"><button class="btn btn-secondary">Recent</button><button class="btn btn-primary">Create Article</button></div>
+                <div class="actions"><button id="kb-recent-btn" class="btn btn-secondary">Recent</button><button id="kb-create-btn" class="btn btn-primary">Create Article</button></div>
             </section>
+
+            <div id="kb-status" class="status-banner">Search for a fix or load recent articles from the database.</div>
 
             <section class="page-grid">
                 <article class="card col-3">
@@ -46,31 +49,32 @@
 
                 <article class="card col-6">
                     <h2>Search Results</h2>
-                    <input placeholder="Search knowledge base, for example: password reset">
-                    <div class="timeline">
-                        <div class="timeline-item"><strong>Password reset failed after OTP</strong><br><small>Relevance 95%</small></div>
-                        <div class="timeline-item"><strong>Unlocking locked user accounts</strong><br><small>Relevance 91%</small></div>
-                        <div class="timeline-item"><strong>Federated login retry handling</strong><br><small>Relevance 84%</small></div>
+                    <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px;">
+                        <input id="kb-query" placeholder="Search knowledge base, for example: password reset">
+                        <button id="search-kb-btn" class="btn btn-primary">Search</button>
+                    </div>
+                    <div id="kb-results" class="timeline" style="margin-top: 12px;">
+                        <div class="status-banner">Use Search or Recent to load live articles.</div>
                     </div>
                 </article>
 
                 <article class="card col-3">
                     <h2>Suggested Actions</h2>
-                    <button class="btn btn-primary">Insert into Ticket</button>
-                    <button class="btn btn-secondary">Copy Resolution Steps</button>
-                    <button class="btn btn-secondary">Share with Team</button>
+                    <p class="muted" style="margin-bottom: 10px;">Actions apply to the selected article in the results panel.</p>
+                    <button id="kb-insert-btn" class="btn btn-primary">Insert into Ticket</button>
+                    <button id="kb-copy-btn" class="btn btn-secondary">Copy Resolution Steps</button>
+                    <button id="kb-share-btn" class="btn btn-secondary">Share with Team</button>
                 </article>
             </section>
         </main>
     </div>
 
     <nav class="mobile-nav" aria-label="Mobile">
-        <a href="knowledge-base.html" data-mobile-nav data-route="knowledge-base">📚 KB</a>
-        <a href="index.html" data-mobile-nav data-route="home">🏠 Home</a>
+        <a href="knowledge-base.html" data-mobile-nav data-route="knowledge-base">Knowledge Base</a>
+        <a href="index.html" data-mobile-nav data-route="home">Home</a>
     </nav>
 
-    <script src="assets/js/api-client.js"></script>
-    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/nav.js?v=20260412"></script>
     <script src="assets/js/pages/knowledge-base.js"></script>
 </body>
 </html>

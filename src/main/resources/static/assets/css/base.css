@@ -13,7 +13,9 @@ body {
     background: var(--bg-main);
     color: var(--text-primary);
     font-family: var(--font-body);
-    line-height: 1.5;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 a {
@@ -52,6 +54,10 @@ small,
     color: var(--text-muted);
 }
 
+strong {
+    color: var(--text-primary);
+}
+
 input,
 select,
 textarea,
@@ -78,6 +84,7 @@ button:focus-visible,
 a:focus-visible {
     outline: none;
     box-shadow: var(--ring-focus);
+    border-color: var(--color-primary-500);
 }
 
 textarea {

@@ -13,7 +13,8 @@
     <link rel="stylesheet" href="assets/css/components.css">
 </head>
 <body data-page="admin-dashboard">
-    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/api-client.js?v=20260412"></script>
+    <script src="assets/js/auth.js?v=20260412"></script>
     <script>
         // Protect this page - only admin can access
         requireRole('admin');
@@ -26,10 +27,10 @@
                 <small id="userDisplay">Admin</small>
             </div>
             <nav class="nav-list" aria-label="Primary">
-                <a class="nav-item active" data-nav data-route="admin-dashboard" href="admin-dashboard.html">📊 System Overview</a>
+                <a class="nav-item active" data-nav data-route="admin-dashboard" href="admin-dashboard.html">System Overview</a>
             </nav>
-            <nav class="nav-list" aria-label="Account" style="border-top: 1px solid var(--color-slate-700); margin-top: 20px; padding-top: 20px;">
-                <button onclick="logout()" class="nav-item" style="text-align: left; background: none; border: none; cursor: pointer; width: 100%;">🚪 Logout</button>
+            <nav class="nav-list" aria-label="Account" style="border-top: 1px solid var(--color-neutral-200); margin-top: 20px; padding-top: 20px;">
+                <button onclick="logout()" class="nav-item" style="text-align: left; background: none; border: none; cursor: pointer; width: 100%;">Logout</button>
             </nav>
         </aside>
 
@@ -40,7 +41,7 @@
                     <p>Real-time view of all tickets and system status.</p>
                 </div>
                 <div class="actions">
-                    <button class="btn btn-secondary" onclick="location.reload()">🔄 Refresh</button>
+                    <button class="btn btn-secondary" onclick="location.reload()">Refresh</button>
                 </div>
             </section>
 
@@ -71,13 +72,13 @@
                 <article class="card col-12">
                     <h2>All System Tickets</h2>
                     <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-                        <select id="roleFilter" style="padding: 8px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: white;">
+                        <select id="roleFilter" style="padding: 8px; background: #ffffff; border: 1px solid #d1d5db; border-radius: 6px; color: #111827;">
                             <option value="">All Roles</option>
                             <option value="agent">Assigned to Agents</option>
                             <option value="client">Created by Clients</option>
                             <option value="escalated">Escalated</option>
                         </select>
-                        <select id="statusFilterAdmin" style="padding: 8px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: white;">
+                        <select id="statusFilterAdmin" style="padding: 8px; background: #ffffff; border: 1px solid #d1d5db; border-radius: 6px; color: #111827;">
                             <option value="">All Status</option>
                             <option value="New">New</option>
                             <option value="Open">Open</option>
@@ -88,10 +89,28 @@
                     </div>
                     <table class="table">
                         <thead>
-                            <tr><th>Ticket ID</th><th>Customer</th><th>Agent</th><th>Channel</th><th>Severity</th><th>Status</th><th>Description</th></tr>
+                            <tr><th>Ticket ID</th><th>Customer</th><th>Agent</th><th>Channel</th><th>Severity</th><th>Status</th><th>Description</th><th>Actions</th></tr>
                         </thead>
                         <tbody id="adminTicketsTableBody">
-                            <tr><td colspan="7" style="text-align: center; color: #94a3b8;">Loading tickets...</td></tr>
+                            <tr><td colspan="8" style="text-align: center; color: #94a3b8;">Loading tickets...</td></tr>
+                        </tbody>
+                    </table>
+                </article>
+
+                <article class="card col-12" id="auditCard">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px;">
+                        <div>
+                            <h2>Audit Trail</h2>
+                            <p class="muted">Recent system actions recorded by the backend.</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="loadAuditLogs()">Refresh Audit</button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr><th>Time</th><th>User</th><th>Action</th><th>Ticket</th><th>Detail</th></tr>
+                        </thead>
+                        <tbody id="auditLogBody">
+                            <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Loading audit logs...</td></tr>
                         </tbody>
                     </table>
                 </article>
@@ -100,32 +119,41 @@
     </div>
 
     <nav class="mobile-nav" aria-label="Mobile">
-        <a href="admin-dashboard.html" data-mobile-nav data-route="admin-dashboard">📊 Overview</a>
-        <a href="index.html" data-mobile-nav data-route="home">🏠 Home</a>
+        <a href="admin-dashboard.html" data-mobile-nav data-route="admin-dashboard">Overview</a>
+        <a href="index.html" data-mobile-nav data-route="home">Home</a>
     </nav>
 
-    <script src="assets/js/api-client.js"></script>
-    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/nav.js?v=20260412"></script>
     <script>
         let allAdminTickets = [];
+        let auditLogs = [];
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             loadAdminTickets();
+            loadAuditLogs();
             document.getElementById('roleFilter').addEventListener('change', filterAdminTickets);
             document.getElementById('statusFilterAdmin').addEventListener('change', filterAdminTickets);
         });
 
         async function loadAdminTickets() {
             try {
-                const response = await fetch('/api/tickets');
-                allAdminTickets = await response.json();
+                allAdminTickets = await ApiClient.get('/tickets');
                 
                 // Update KPIs
                 updateKPIs(allAdminTickets);
                 renderAdminTickets(allAdminTickets);
             } catch (error) {
                 console.error('Error loading tickets:', error);
-                document.getElementById('adminTicketsTableBody').innerHTML = '<tr><td colspan="7" style="text-align: center; color: #ef4444;">Failed to load tickets</td></tr>';
+                document.getElementById('adminTicketsTableBody').innerHTML = '<tr><td colspan="8" style="text-align: center; color: #ef4444;">Failed to load tickets</td></tr>';
             }
         }
 
@@ -147,7 +175,7 @@
             const tbody = document.getElementById('adminTicketsTableBody');
             
             if (tickets.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #94a3b8;">No tickets found.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #94a3b8;">No tickets found.</td></tr>';
                 return;
             }
 
@@ -157,13 +185,16 @@
                 
                 return `
                     <tr>
-                        <td><strong>${ticket.ticketId}</strong></td>
-                        <td>${ticket.customerId || 'N/A'}</td>
-                        <td>${ticket.agentId || 'Unassigned'}</td>
-                        <td>${ticket.channel || 'General'}</td>
-                        <td><span class="chip chip-${severityClass}">${ticket.severity}</span></td>
-                        <td><span class="chip chip-${statusClass}">${ticket.status}</span></td>
-                        <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${ticket.description || 'No description'}</td>
+                        <td><strong>${escapeHtml(ticket.ticketId)}</strong></td>
+                        <td>${escapeHtml(ticket.customerId || 'N/A')}</td>
+                        <td>${escapeHtml(ticket.agentId || 'Unassigned')}</td>
+                        <td>${escapeHtml(ticket.channel || 'General')}</td>
+                        <td><span class="chip chip-${severityClass}">${escapeHtml(ticket.severity)}</span></td>
+                        <td><span class="chip chip-${statusClass}">${escapeHtml(ticket.status)}</span></td>
+                        <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(ticket.description || 'No description')}</td>
+                        <td>
+                            <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.9rem;" onclick="deleteTicket('${ticket.ticketId}')">Delete</button>
+                        </td>
                     </tr>
                 `;
             }).join('');
@@ -188,6 +219,56 @@
             });
 
             renderAdminTickets(filtered);
+        }
+
+        async function loadAuditLogs() {
+            try {
+                auditLogs = await ApiClient.get('/audit/logs?limit=12');
+                renderAuditLogs(auditLogs);
+            } catch (error) {
+                console.error('Error loading audit logs:', error);
+                const tbody = document.getElementById('auditLogBody');
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #ef4444;">Failed to load audit logs</td></tr>';
+                }
+            }
+        }
+
+        async function deleteTicket(ticketId) {
+            if (!confirm(`Delete ticket ${ticketId}? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                await ApiClient.delete(`/tickets/${ticketId}`);
+                await loadAdminTickets();
+                await loadAuditLogs();
+            } catch (error) {
+                console.error('Error deleting ticket:', error);
+                alert('Failed to delete ticket.');
+            }
+        }
+
+        function renderAuditLogs(logs) {
+            const tbody = document.getElementById('auditLogBody');
+            if (!tbody) return;
+
+            if (!logs || logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #94a3b8;">No audit entries found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = logs.map(function (entry) {
+                return `
+                    <tr>
+                        <td>${entry.createdAt ? new Date(entry.createdAt).toLocaleString() : '-'}</td>
+                        <td>${entry.userId || 'SYSTEM'}</td>
+                        <td>${entry.action || '-'}</td>
+                        <td>${entry.ticketId || '-'}</td>
+                        <td style="max-width: 320px; overflow: hidden; text-overflow: ellipsis;">${entry.detail || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
         }
     </script>
 </body>

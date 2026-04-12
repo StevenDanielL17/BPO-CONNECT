@@ -11,9 +11,79 @@
     <link rel="stylesheet" href="assets/css/base.css">
     <link rel="stylesheet" href="assets/css/layout.css">
     <link rel="stylesheet" href="assets/css/components.css">
+    <style>
+        .feedback-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.68);
+            z-index: 1200;
+        }
+
+        .feedback-card {
+            width: min(100%, 440px);
+            background: #ffffff;
+            border: 1px solid #dbe4f0;
+            border-radius: 18px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+            padding: 28px;
+            display: grid;
+            gap: 14px;
+            text-align: center;
+        }
+
+        .feedback-card.success {
+            border-color: #b7ebd2;
+        }
+
+        .feedback-card.error {
+            border-color: #f4caca;
+        }
+
+        .feedback-badge {
+            justify-self: center;
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .feedback-card.success .feedback-badge {
+            background: #ecfdf4;
+            color: #065f46;
+        }
+
+        .feedback-card.error .feedback-badge {
+            background: #fff2f2;
+            color: #9f1239;
+        }
+
+        .feedback-title {
+            font-size: 1.35rem;
+            line-height: 1.2;
+            color: #111827;
+        }
+
+        .feedback-message {
+            color: #475569;
+            line-height: 1.65;
+            white-space: pre-line;
+        }
+
+        .feedback-actions {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
 </head>
 <body data-page="client-portal">
-    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/api-client.js?v=20260412"></script>
+    <script src="assets/js/auth.js?v=20260412"></script>
     <script>
         requireRole('client');
     </script>
@@ -21,19 +91,17 @@
         <aside class="sidebar">
             <div class="brand"><p class="kicker">BPO Connect</p><h2 class="title">Customer Portal</h2><small id="userDisplay">Customer</small></div>
             <nav class="nav-list" aria-label="Primary">
-                <a class="nav-item active" data-nav data-route="client-portal" href="client-portal.html">👤 My Tickets</a>
+                <a class="nav-item active" data-nav data-route="client-portal" href="client-portal.html">My Tickets</a>
             </nav>
-            <nav class="nav-list" aria-label="Account" style="border-top: 1px solid var(--color-slate-700); margin-top: 20px; padding-top: 20px;">
-                <button onclick="logout()" class="nav-item" style="text-align: left; background: none; border: none; cursor: pointer; width: 100%;">🚪 Logout</button>
-            </nav>
-                <a class="nav-item" data-nav data-route="client-portal" href="client-portal.html">Client Portal</a>
+            <nav class="nav-list" aria-label="Account" style="border-top: 1px solid var(--color-neutral-200); margin-top: 20px; padding-top: 20px;">
+                <button onclick="logout()" class="nav-item" style="text-align: left; background: none; border: none; cursor: pointer; width: 100%;">Logout</button>
             </nav>
         </aside>
 
         <main class="content">
             <section class="topbar">
                 <div><h1>My Tickets</h1><p>Create and track your support requests in real-time.</p></div>
-                <div class="actions"><button class="btn btn-primary" onclick="openCreateTicketModal()">📝 Create Ticket</button></div>
+                <div class="actions"><button class="btn btn-primary" onclick="openCreateTicketModal()">Create Ticket</button></div>
             </section>
 
             <section class="kpi-grid">
@@ -58,12 +126,12 @@
 
         <!-- Create Ticket Modal -->
         <div id="createTicketModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
-            <div style="background: #0f172a; border: 1px solid #334155; padding: 30px; border-radius: 12px; max-width: 500px; width: 90%;">
-                <h2 style="color: white; margin-bottom: 20px;">Create New Ticket</h2>
+            <div style="background: #ffffff; border: 1px solid #e5e7eb; padding: 30px; border-radius: 12px; max-width: 500px; width: 90%; box-shadow: 0 18px 36px rgba(17,24,39,0.12);">
+                <h2 style="color: #111827; margin-bottom: 20px;">Create New Ticket</h2>
                 <form id="createTicketForm" style="display: flex; flex-direction: column; gap: 15px;">
                     <div>
-                        <label style="color: #cbd5e1; display: block; margin-bottom: 5px;">Service/Category *</label>
-                        <select id="ticketChannel" required style="width: 100%; padding: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: white;">
+                        <label style="color: #374151; display: block; margin-bottom: 5px;">Service/Category *</label>
+                        <select id="ticketChannel" required style="width: 100%; padding: 10px; background: #ffffff; border: 1px solid #d1d5db; border-radius: 6px; color: #111827;">
                             <option value="">Select category...</option>
                             <option value="billing">Billing</option>
                             <option value="technical">Technical Support</option>
@@ -72,8 +140,8 @@
                         </select>
                     </div>
                     <div>
-                        <label style="color: #cbd5e1; display: block; margin-bottom: 5px;">Severity *</label>
-                        <select id="ticketSeverity" required style="width: 100%; padding: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: white;">
+                        <label style="color: #374151; display: block; margin-bottom: 5px;">Severity *</label>
+                        <select id="ticketSeverity" required style="width: 100%; padding: 10px; background: #ffffff; border: 1px solid #d1d5db; border-radius: 6px; color: #111827;">
                             <option value="Low">Low</option>
                             <option value="Medium">Medium</option>
                             <option value="High">High</option>
@@ -81,8 +149,8 @@
                         </select>
                     </div>
                     <div>
-                        <label style="color: #cbd5e1; display: block; margin-bottom: 5px;">Description *</label>
-                        <textarea id="ticketDescription" required placeholder="Describe your issue..." style="width: 100%; padding: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: white; min-height: 100px; resize: none;"></textarea>
+                        <label style="color: #374151; display: block; margin-bottom: 5px;">Description *</label>
+                        <textarea id="ticketDescription" required placeholder="Describe your issue..." style="width: 100%; padding: 10px; background: #ffffff; border: 1px solid #d1d5db; border-radius: 6px; color: #111827; min-height: 100px; resize: none;"></textarea>
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <button type="submit" class="btn btn-primary" style="flex: 1;">Create Ticket</button>
@@ -91,16 +159,28 @@
                 </form>
             </div>
         </div>
+
+        <div id="operationFeedback" class="feedback-overlay" aria-hidden="true">
+            <div id="operationFeedbackCard" class="feedback-card success" role="dialog" aria-modal="true" aria-labelledby="operationFeedbackTitle">
+                <div id="operationFeedbackBadge" class="feedback-badge">Success</div>
+                <h2 id="operationFeedbackTitle" class="feedback-title">Ticket created successfully</h2>
+                <p id="operationFeedbackMessage" class="feedback-message"></p>
+                <div class="feedback-actions">
+                    <button type="button" class="btn btn-primary" id="operationFeedbackClose">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <nav class="mobile-nav" aria-label="Mobile">
-        <a href="client-portal.html" data-mobile-nav data-route="client-portal">🎫 My Tickets</a>
-        <a href="knowledge-base.html" data-mobile-nav data-route="knowledge-base">📚 KB</a>
+        <a href="client-portal.html" data-mobile-nav data-route="client-portal">My Tickets</a>
+        <a href="knowledge-base.html" data-mobile-nav data-route="knowledge-base">Knowledge Base</a>
     </nav>
-    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/nav.js?v=20260412"></script>
     <script>
         // Load tickets on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            await Auth.loadCurrentUser();
             loadClientTickets();
         });
 
@@ -113,6 +193,46 @@
                 console.error('createTicketForm not found');
             }
         }, 100);
+
+        const operationFeedback = document.getElementById('operationFeedback');
+        const operationFeedbackCard = document.getElementById('operationFeedbackCard');
+        const operationFeedbackTitle = document.getElementById('operationFeedbackTitle');
+        const operationFeedbackMessage = document.getElementById('operationFeedbackMessage');
+        const operationFeedbackClose = document.getElementById('operationFeedbackClose');
+
+        if (operationFeedbackClose) {
+            operationFeedbackClose.addEventListener('click', closeOperationFeedback);
+        }
+
+        if (operationFeedback) {
+            operationFeedback.addEventListener('click', function(event) {
+                if (event.target === operationFeedback) {
+                    closeOperationFeedback();
+                }
+            });
+        }
+
+        function showOperationFeedback(title, message, variant) {
+            if (!operationFeedback || !operationFeedbackCard || !operationFeedbackTitle || !operationFeedbackMessage) {
+                return;
+            }
+
+            operationFeedbackCard.classList.remove('success', 'error');
+            operationFeedbackCard.classList.add(variant === 'error' ? 'error' : 'success');
+            operationFeedbackTitle.textContent = title;
+            operationFeedbackMessage.textContent = message;
+            operationFeedback.style.display = 'flex';
+            operationFeedback.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeOperationFeedback() {
+            if (!operationFeedback) {
+                return;
+            }
+
+            operationFeedback.style.display = 'none';
+            operationFeedback.setAttribute('aria-hidden', 'true');
+        }
 
         function openCreateTicketModal() {
             const modal = document.getElementById('createTicketModal');
@@ -131,9 +251,9 @@
         async function handleCreateTicket(e) {
             e.preventDefault();
             
-            const user = checkAuthentication();
+            const user = await Auth.loadCurrentUser();
             if (!user) {
-                alert('Please log in first');
+                showOperationFeedback('Login required', 'Please log in first to create a ticket.', 'error');
                 return;
             }
 
@@ -142,53 +262,38 @@
             const description = document.getElementById('ticketDescription').value;
 
             if (!channel || !severity || !description) {
-                alert('Please fill in all fields');
+                showOperationFeedback('Missing details', 'Please fill in all required fields before submitting.', 'error');
                 return;
             }
 
             try {
-                const response = await fetch('/api/tickets', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        channel: channel,
-                        customerId: user.email,
-                        agentId: 'unassigned',
-                        severity: severity,
-                        description: description,
-                        referenceId: 'CLIENT-' + Date.now()
-                    })
+                const ticket = await ApiClient.post('/tickets', {
+                    channel: channel,
+                    customerId: user.email,
+                    agentId: 'unassigned',
+                    severity: severity,
+                    description: description,
+                    referenceId: 'CLIENT-' + Date.now()
                 });
 
-                if (response.ok) {
-                    const ticket = await response.json();
-                    alert('✅ Ticket created successfully!\nTicket ID: ' + ticket.ticketId);
+                if (ticket) {
                     document.getElementById('createTicketForm').reset();
                     closeCreateTicketModal();
+                    showOperationFeedback('Ticket created successfully', 'Ticket ID: ' + ticket.ticketId + '\nYour request is now in the queue and ready for follow-up.', 'success');
                     loadClientTickets();
-                } else {
-                    const errorText = await response.text();
-                    alert('❌ Failed to create ticket: ' + response.status + '\n' + errorText);
                 }
             } catch (error) {
                 console.error('Error creating ticket:', error);
-                alert('❌ Error creating ticket:\n' + error.message + '\n\n💡 Make sure:\n1. Server is running at http://localhost:8080\n2. You are logged in\n3. Check browser console for details');
+                showOperationFeedback('Ticket creation failed', 'Error creating ticket:\n' + error.message + '\n\nMake sure the server is running and you are logged in.', 'error');
             }
         }
 
         async function loadClientTickets() {
             try {
-                const response = await fetch('/api/tickets');
-                if (!response.ok) {
-                    throw new Error('Server returned ' + response.status);
-                }
-                
-                const allTickets = await response.json();
+                const allTickets = await ApiClient.get('/tickets');
                 console.log('All tickets from API:', allTickets);
                 
-                const user = checkAuthentication();
+                const user = await Auth.loadCurrentUser();
                 console.log('Current user:', user);
                 
                 if (!user) {
@@ -245,23 +350,23 @@
 
         async function escalateTicket(ticketId) {
             try {
-                const response = await fetch(`/api/tickets/${ticketId}/escalate`, {
-                    method: 'POST'
-                });
-                if (response.ok) {
-                    alert('Ticket escalated successfully!');
-                    loadClientTickets();
-                }
+                await ApiClient.post(`/tickets/${ticketId}/escalate`, {});
+                showOperationFeedback('Ticket escalated', 'Ticket ' + ticketId + ' was escalated successfully and moved into the attention queue.', 'success');
+                loadClientTickets();
             } catch (error) {
                 console.error('Error escalating ticket:', error);
+                showOperationFeedback('Escalation failed', error.message || 'Unable to escalate this ticket right now.', 'error');
             }
         }
 
         // Close modal when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('createTicketModal');
+            const feedback = document.getElementById('operationFeedback');
             if (event.target === modal) {
                 closeCreateTicketModal();
+            } else if (event.target === feedback) {
+                closeOperationFeedback();
             }
         }
     </script></body>

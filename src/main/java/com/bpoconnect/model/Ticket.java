@@ -42,6 +42,10 @@ public abstract class Ticket {
     public String getDescription() { return description; }
     public String getIssueType() { return issueType; }
     public String getSubType() { return subType; }
+
+    public void setAgentId(String agentId) {
+        this.agentId = agentId;
+    }
     
     // Abstract method to be implemented by Concrete Products
     public abstract String getDetails();

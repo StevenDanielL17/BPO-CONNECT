@@ -5,6 +5,8 @@ import com.bpoconnect.repository.KnowledgeBaseRepository;
 
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class KnowledgeBaseService {
@@ -16,10 +18,19 @@ public class KnowledgeBaseService {
     }
 
     public List<KnowledgeBaseArticle> searchArticles(String query) {
-        return kbRepository.findByTitleContainingOrTagsContaining(query, query);
+        String safeQuery = Objects.requireNonNull(query, "query");
+        return kbRepository.findByTitleContainingOrTagsContaining(safeQuery, safeQuery);
+    }
+
+    public List<KnowledgeBaseArticle> getAllArticles() {
+        return kbRepository.findAll();
     }
 
     public KnowledgeBaseArticle saveArticle(KnowledgeBaseArticle article) {
-        return kbRepository.save(article);
+        KnowledgeBaseArticle safeArticle = Objects.requireNonNull(article, "article");
+        if (safeArticle.getArticleId() == null || safeArticle.getArticleId().isBlank()) {
+            safeArticle.setArticleId("KB-" + UUID.randomUUID().toString().substring(0, 8));
+        }
+        return kbRepository.save(safeArticle);
     }
 }

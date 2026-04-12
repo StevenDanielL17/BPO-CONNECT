@@ -13,7 +13,8 @@
     <link rel="stylesheet" href="assets/css/components.css">
 </head>
 <body data-page="reports">
-    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/api-client.js?v=20260412"></script>
+    <script src="assets/js/auth.js?v=20260412"></script>
     <script>
         requireRole('supervisor');
     </script>
@@ -21,18 +22,23 @@
         <aside class="sidebar">
             <div class="brand"><p class="kicker">BPO Connect</p><h2 class="title">Supervisor Dashboard</h2><small id="userDisplay">Supervisor</small></div>
             <nav class="nav-list" aria-label="Primary">
-                <a class="nav-item active" data-nav data-route="reports" href="reports.html">📊 Performance Reports</a>
+                <a class="nav-item active" data-nav data-route="reports" href="reports.html">Performance Reports</a>
             </nav>
-            <nav class="nav-list" aria-label="Account" style="border-top: 1px solid var(--color-slate-700); margin-top: 20px; padding-top: 20px;">
-                <button onclick="logout()" class="nav-item" style="text-align: left; background: none; border: none; cursor: pointer; width: 100%;">🚪 Logout</button>
+            <nav class="nav-list" aria-label="Account" style="border-top: 1px solid var(--color-neutral-200); margin-top: 20px; padding-top: 20px;">
+                <button onclick="logout()" class="nav-item" style="text-align: left; background: none; border: none; cursor: pointer; width: 100%;">Logout</button>
             </nav>
         </aside>
 
         <main class="content">
             <section class="topbar">
                 <div><h1>Performance Reports</h1><p>Monitor team performance and ticket trends.</p></div>
-                <div class="actions"><button class="btn btn-primary" onclick="location.reload()">🔄 Refresh</button></div>
+                <div class="actions">
+                    <button id="refresh-report-btn" class="btn btn-secondary">Refresh</button>
+                    <button id="export-report-btn" class="btn btn-primary">Export CSV</button>
+                </div>
             </section>
+
+            <div id="report-status" class="status-banner">Loading report summary...</div>
 
             <section class="kpi-grid">
                 <article class="kpi-card">
@@ -88,21 +94,28 @@
     </div>
 
     <nav class="mobile-nav" aria-label="Mobile">
-        <a href="reports.html" data-mobile-nav data-route="reports">📊 Reports</a>
-        <a href="knowledge-base.html" data-mobile-nav data-route="knowledge-base">📚 KB</a>
+        <a href="reports.html" data-mobile-nav data-route="reports">Reports</a>
+        <a href="knowledge-base.html" data-mobile-nav data-route="knowledge-base">Knowledge Base</a>
     </nav>
 
-    <script src="assets/js/api-client.js"></script>
-    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/nav.js?v=20260412"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             loadReportData();
+            const refreshButton = document.getElementById('refresh-report-btn');
+            const exportButton = document.getElementById('export-report-btn');
+
+            if (refreshButton) {
+                refreshButton.addEventListener('click', loadReportData);
+            }
+            if (exportButton) {
+                exportButton.addEventListener('click', exportCsv);
+            }
         });
 
         async function loadReportData() {
             try {
-                const response = await fetch('/api/tickets');
-                const allTickets = await response.json();
+                const allTickets = await ApiClient.get('/tickets');
 
                 // Update KPIs
                 const total = allTickets.length;
@@ -149,8 +162,40 @@
                     return `<tr><td>${channel}</td><td>${count}</td></tr>`;
                 }).join('');
 
+                const statusBanner = document.getElementById('report-status');
+                if (statusBanner) {
+                    statusBanner.innerHTML = `<strong>Updated:</strong> ${total} tickets loaded from the backend.`;
+                }
+
             } catch (error) {
                 console.error('Error loading report data:', error);
+                const statusBanner = document.getElementById('report-status');
+                if (statusBanner) {
+                    statusBanner.textContent = 'Report refresh failed. Check the backend connection.';
+                }
+            }
+        }
+
+        async function exportCsv() {
+            const currentUser = await Auth.loadCurrentUser();
+            const userId = currentUser ? currentUser.userId || currentUser.email : 'SYSTEM';
+            try {
+                const csvText = await ApiClient.get(`/reports/daily/csv?userId=${encodeURIComponent(userId)}`);
+                const blob = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.href = url;
+                link.download = 'bpo-service-connect-report.csv';
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('CSV export failed:', error);
+                const statusBanner = document.getElementById('report-status');
+                if (statusBanner) {
+                    statusBanner.textContent = 'CSV export failed.';
+                }
             }
         }
     </script>

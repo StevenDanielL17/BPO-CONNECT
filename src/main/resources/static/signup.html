@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - BPO Connect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/tokens.css">
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/public-pages.css">
+</head>
+<body data-page="signup">
+    <main class="auth-shell">
+        <div class="auth-badge">Create account</div>
+        <h1 class="auth-title">Start with an email address</h1>
+        <p class="auth-lead">New accounts are created as client users and are stored in the database so they can sign in later with the same email and password.</p>
+
+        <div class="error-box" id="signupError"></div>
+        <div class="success-box" id="signupSuccess"></div>
+
+        <form id="signupForm" class="auth-grid">
+            <div class="field">
+                <label for="name">Full name</label>
+                <input type="text" id="name" name="name" placeholder="Jane Doe" autocomplete="name" required>
+            </div>
+            <div class="field">
+                <label for="email">Email address</label>
+                <input type="email" id="email" name="email" placeholder="name@company.com" autocomplete="email" required>
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Create a password" autocomplete="new-password" required>
+            </div>
+            <div class="field">
+                <label for="confirmPassword">Confirm password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repeat your password" autocomplete="new-password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-auth">Create Account</button>
+        </form>
+
+        <div class="auth-links">
+            <a href="login.html">Already have an account?</a>
+            <a href="index.html">Back home</a>
+        </div>
+
+        <div class="auth-footer">BPO Connect account creation</div>
+    </main>
+
+    <script src="assets/js/api-client.js?v=20260412"></script>
+    <script src="assets/js/auth.js?v=20260412"></script>
+    <script src="assets/js/pages/signup.js?v=20260412"></script>
+</body>
+</html>

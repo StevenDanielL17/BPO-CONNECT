@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface SLARepository extends JpaRepository<SLA, String> {
     Optional<SLA> findFirstByPriorityLevel(String priorityLevel);
+    Optional<SLA> findFirstByPriorityLevelIgnoreCase(String priorityLevel);
 }
